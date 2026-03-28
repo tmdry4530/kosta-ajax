@@ -19,7 +19,20 @@
   }
 
   function writeFavorites(items) {
-    window.localStorage.setItem(app.constants.favoriteStorageKey, JSON.stringify(items));
+    var nextItems = items.slice();
+
+    while (true) {
+      try {
+        window.localStorage.setItem(app.constants.favoriteStorageKey, JSON.stringify(nextItems));
+        return nextItems;
+      } catch (error) {
+        if (!nextItems.length) {
+          throw error;
+        }
+
+        nextItems.pop();
+      }
+    }
   }
 
   function normalizeFavorite(place) {

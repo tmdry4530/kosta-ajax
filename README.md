@@ -122,7 +122,7 @@ http://127.0.0.1:4173/index.html
 
 ## 참고 사항
 
-- `js/config.js`는 `.gitignore` 대상입니다.
+- 기본 개발 흐름에서는 `js/config.js`를 `.gitignore`로 유지합니다. 다만 현재 저장소는 학교 과제 제출/데모용이므로 예외적으로 `js/config.js`가 포함될 수 있습니다.
 - 브라우저에서 직접 API 키를 사용하므로 완전한 비밀 관리는 어렵습니다.
 - 카카오 지도는 등록된 도메인에서만 정상 동작합니다.
 - Kakao Local API가 `App disabled OPEN_MAP_AND_LOCAL service`를 반환하면 카카오 개발자 콘솔에서 지도/로컬 서비스를 활성화해야 합니다.
