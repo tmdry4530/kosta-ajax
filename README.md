@@ -75,6 +75,7 @@ WeatherEats/
 │   ├── weather/
 │   └── food/
 ├── AGENTS.md
+├── JS-LOGIC.md
 ├── .gitignore
 └── README.md
 ```
@@ -151,3 +152,10 @@ http://127.0.0.1:4173/search.html?keyword=맛집&lat=37.3943&lon=126.9568&page=1
 - 기본 개발 흐름에서는 `js/config.js`를 `.gitignore`로 유지합니다.
 - 다만 현재 저장소는 학교 과제 제출/데모용이라 `js/config.js`가 예외적으로 포함될 수 있습니다.
 - 브라우저에서 직접 API 키를 사용하므로 완전한 비밀 관리는 어렵습니다.
+
+
+## 11. 코드 이해용 문서
+
+JS 로직만 빠르게 이해하고 싶다면 아래 문서를 보면 됩니다.
+
+- `JS-LOGIC.md` : `js/` 폴더 기준 로직 흐름, 파일 역할, 데이터 흐름 설명

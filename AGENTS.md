@@ -79,6 +79,7 @@ WeatherEats/
 │   ├── weather/            # 날씨 관련 이미지
 │   └── food/               # 음식 카테고리 이미지
 ├── AGENTS.md               # 이 파일
+├── JS-LOGIC.md             # JS 로직 설명 문서
 ├── .gitignore
 └── README.md
 ```
