@@ -161,7 +161,7 @@
         filterPlaces();
         renderResults();
         renderPagination();
-        cache.$mapSummary.text('"' + state.keyword + '" 키워드로 내 주변 3km를 검색했어요.');
+        cache.$mapSummary.text('‘' + state.keyword + '’ 키워드로 내 주변 3km를 검색했어요.');
         app.utils.updateAddressBar({
           keyword: state.keyword,
           lat: state.lat,
@@ -175,6 +175,11 @@
       .fail(function(error) {
         var message = app.utils.buildApiErrorMessage('kakao', error, '검색 결과를 불러오지 못했어요. 잠시 후 다시 시도해주세요.');
         app.ui.showBanner(cache.$status, 'error', message);
+
+        if (message.indexOf('카카오 앱에서 지도/로컬 서비스를 활성화해야 해요.') !== -1) {
+          cache.$mapSummary.text('카카오 앱 설정 문제로 지도와 리스트 검색이 모두 막혀 있어요.');
+        }
+
         state.places = [];
         state.visiblePlaces = [];
         renderResults();
@@ -296,8 +301,8 @@
         app.ui.showBanner(cache.$status, 'info', '추천 카드 또는 직접 검색으로 맛집을 찾아보세요.');
       })
       .fail(function(error) {
-        app.ui.showBanner(cache.$status, 'error', (error && error.message ? error.message : '지도 기능을 불러오지 못했어요.') + ' 리스트 검색은 계속 사용할 수 있어요.');
-        cache.$mapSummary.text('지도를 불러오지 못했지만 리스트 검색은 가능해요.');
+        app.ui.showBanner(cache.$status, 'error', (error && error.message ? error.message : '지도 기능을 불러오지 못했어요.') + ' 검색도 앱 설정에 따라 함께 실패할 수 있어요.');
+        cache.$mapSummary.text('지도를 불러오지 못했어요. 검색 기능은 계속 시도할 수 있어요.');
 
         if (state.keyword) {
           search(state.keyword, state.page);
