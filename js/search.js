@@ -11,7 +11,8 @@
     places: [],
     visiblePlaces: [],
     meta: null,
-    focusPlaceId: ''
+    focusPlaceId: '',
+    demoMode: false
   };
   var cache = {};
 
@@ -154,7 +155,7 @@
     app.ui.showBanner(cache.$status, 'info', '맛집을 찾고 있어요.');
     cache.$resultsList.html('<div class="skeleton-block" style="height: 220px;"></div>');
 
-    app.kakao.searchPlaces(state.keyword, state.lat, state.lon, state.page, app.constants.pageSize)
+    app.kakao.searchPlaces(state.keyword, state.lat, state.lon, state.page, app.constants.pageSize, { forceFallback: state.demoMode })
       .done(function(response) {
         state.meta = response.meta || null;
         state.places = $.map(response.documents || [], normalizePlace);
@@ -168,11 +169,17 @@
           lon: state.lon,
           page: state.page,
           filter: state.filter === 'all' ? '' : state.filter,
-          placeId: ''
+          placeId: '',
+          demo: state.demoMode ? '1' : ''
         });
         if (state.meta && state.meta.fallback) {
-          app.ui.showBanner(cache.$status, 'info', '카카오 서비스 설정이 비활성화되어 데모 맛집 데이터를 보여주고 있어요.');
-          cache.$mapSummary.text('카카오 서비스가 비활성화되어 “' + state.keyword + '” 데모 결과를 보여주고 있어요.');
+          if (state.meta.fallback_reason === 'manual-demo') {
+            app.ui.showBanner(cache.$status, 'info', '스크린샷/발표용 데모 모드 결과를 보여주고 있어요.');
+            cache.$mapSummary.text('데모 모드로 “' + state.keyword + '” 결과를 보여주고 있어요.');
+          } else {
+            app.ui.showBanner(cache.$status, 'info', '카카오 서비스 설정이 비활성화되어 데모 맛집 데이터를 보여주고 있어요.');
+            cache.$mapSummary.text('카카오 서비스가 비활성화되어 “' + state.keyword + '” 데모 결과를 보여주고 있어요.');
+          }
         } else {
           app.ui.showBanner(cache.$status, 'success', '검색 결과를 불러왔어요.');
         }
@@ -235,7 +242,8 @@
         lon: state.lon,
         page: state.page,
         filter: state.filter === 'all' ? '' : state.filter,
-        placeId: ''
+        placeId: '',
+        demo: state.demoMode ? '1' : ''
       });
     });
 
@@ -284,6 +292,7 @@
     state.page = Number(params.page || 1) || 1;
     state.filter = params.filter || 'all';
     state.focusPlaceId = params.placeId || '';
+    state.demoMode = params.demo === '1';
 
     cache.$input.val(state.keyword);
     $('.filter-chip').removeClass('is-active').filter('[data-filter="' + state.filter + '"]').addClass('is-active');
@@ -291,7 +300,7 @@
     app.kakao.loadSdk()
       .done(function() {
         app.kakao.createMap('map', state.lat, state.lon);
-        cache.$mapSummary.text('기본 위치로 지도를 준비했어요.');
+        cache.$mapSummary.text(state.demoMode ? '데모 모드 지도를 준비했어요.' : '기본 위치로 지도를 준비했어요.');
 
         if (state.keyword) {
           search(state.keyword, state.page);

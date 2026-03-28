@@ -142,7 +142,7 @@
     return docs;
   }
 
-  function buildFallbackResponse(keyword, lat, lon, page, size) {
+  function buildFallbackResponse(keyword, lat, lon, page, size, reason) {
     var pageNumber = page || 1;
     var pageSize = size || app.constants.pageSize;
     var docs = buildFallbackDocuments(keyword, lat, lon);
@@ -155,16 +155,26 @@
         pageable_count: docs.length,
         total_count: docs.length,
         is_end: end >= docs.length,
-        fallback: true
+        fallback: true,
+        fallback_reason: reason || 'service-disabled'
       }
     };
   }
 
-  mapModule.searchPlaces = function(keyword, lat, lon, page, size) {
+  mapModule.searchPlaces = function(keyword, lat, lon, page, size, options) {
     var configError = ensureKakaoConfig();
+    var settings = $.extend({
+      forceFallback: false
+    }, options || {});
 
     if (configError) {
       return configError;
+    }
+
+    if (settings.forceFallback) {
+      return $.Deferred(function(deferred) {
+        deferred.resolve(buildFallbackResponse(keyword, lat, lon, page, size, 'manual-demo'));
+      }).promise();
     }
 
     return $.Deferred(function(deferred) {
@@ -190,7 +200,7 @@
         })
         .fail(function(error) {
           if (shouldUseFallback(error)) {
-            deferred.resolve(buildFallbackResponse(keyword, lat, lon, page, size));
+            deferred.resolve(buildFallbackResponse(keyword, lat, lon, page, size, 'service-disabled'));
             return;
           }
 
