@@ -161,7 +161,7 @@
         filterPlaces();
         renderResults();
         renderPagination();
-        cache.$mapSummary.text('‘' + state.keyword + '’ 키워드로 내 주변 3km를 검색했어요.');
+        cache.$mapSummary.text('“' + state.keyword + '” 키워드로 내 주변 3km를 검색했어요.');
         app.utils.updateAddressBar({
           keyword: state.keyword,
           lat: state.lat,
@@ -170,15 +170,16 @@
           filter: state.filter === 'all' ? '' : state.filter,
           placeId: ''
         });
-        app.ui.showBanner(cache.$status, 'success', '검색 결과를 불러왔어요.');
+        if (state.meta && state.meta.fallback) {
+          app.ui.showBanner(cache.$status, 'info', '카카오 서비스 설정이 비활성화되어 데모 맛집 데이터를 보여주고 있어요.');
+          cache.$mapSummary.text('카카오 서비스가 비활성화되어 “' + state.keyword + '” 데모 결과를 보여주고 있어요.');
+        } else {
+          app.ui.showBanner(cache.$status, 'success', '검색 결과를 불러왔어요.');
+        }
       })
       .fail(function(error) {
         var message = app.utils.buildApiErrorMessage('kakao', error, '검색 결과를 불러오지 못했어요. 잠시 후 다시 시도해주세요.');
         app.ui.showBanner(cache.$status, 'error', message);
-
-        if (message.indexOf('카카오 앱에서 지도/로컬 서비스를 활성화해야 해요.') !== -1) {
-          cache.$mapSummary.text('카카오 앱 설정 문제로 지도와 리스트 검색이 모두 막혀 있어요.');
-        }
 
         state.places = [];
         state.visiblePlaces = [];
