@@ -3,8 +3,59 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WeatherEats - Favorites</title>
+  <title>WeatherEats | 즐겨찾기</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="css/favorites.css">
 </head>
-<body>
+<body data-page="favorites" class="theme-default">
+  <div class="app-shell">
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="index.html" aria-label="WeatherEats 홈">
+          <span class="brand-mark">🍽️</span>
+          <span class="brand-text">WeatherEats</span>
+        </a>
+        <nav class="header-nav" aria-label="주요 메뉴">
+          <a class="button button-ghost" href="index.html">홈</a>
+          <a class="button button-ghost" href="search.html?keyword=%EB%A7%9B%EC%A7%91">검색</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="section-block favorites-main">
+      <div class="container favorites-layout">
+        <section class="panel favorites-panel">
+          <div id="favorites-status" class="status-banner" aria-live="polite"></div>
+          <div class="favorites-header">
+            <div>
+              <p class="section-kicker">내 저장 목록</p>
+              <h1 class="section-title">즐겨찾기</h1>
+              <p id="favorites-count" class="section-caption">즐겨찾기를 불러오는 중입니다.</p>
+            </div>
+            <button id="clear-favorites-button" class="button button-danger" type="button">전체삭제</button>
+          </div>
+
+          <div id="favorites-empty" class="empty-state"></div>
+          <div id="favorites-list" class="favorites-list" aria-live="polite"></div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p>© 2026 WeatherEats</p>
+        <a href="search.html?keyword=%EB%A7%9B%EC%A7%91">맛집 검색하기</a>
+      </div>
+    </footer>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <script src="js/config.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/favorites.js"></script>
 </body>
 </html>
