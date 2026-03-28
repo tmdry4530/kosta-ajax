@@ -1,0 +1,3 @@
+# WeatherEats
+
+WeatherEats project scaffold.
