@@ -81,7 +81,6 @@ WeatherEats/
 │   └── food/               # 음식 카테고리 이미지
 ├── AGENTS.md               # 이 파일
 ├── JS-LOGIC.md             # JS 로직 설명 문서
-├── weathereats_ui_feedback.md # UI 피드백 문서
 ├── .gitignore
 └── README.md
 ```
