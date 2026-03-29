@@ -8,6 +8,7 @@
 }
 
 .search-controls-panel {
+  background: #fffaf6;
   display: grid;
   gap: 16px;
 }
@@ -236,11 +237,14 @@
   }
 
   .search-controls-panel {
+    background: #fffaf6;
+    border: 1px solid rgba(45, 52, 54, 0.08);
+    box-shadow: 0 14px 28px rgba(45, 52, 54, 0.08);
     gap: 12px;
     padding-bottom: 14px;
     position: sticky;
     top: 74px;
-    z-index: 20;
+    z-index: 30;
   }
 
   .search-form {
@@ -268,6 +272,8 @@
   .search-content-grid {
     display: flex;
     flex-direction: column;
+    gap: 16px;
+    padding-top: 4px;
   }
 
   .results-panel {
