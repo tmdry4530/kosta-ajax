@@ -17,6 +17,35 @@
   max-width: 560px;
 }
 
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.button-hero {
+  min-width: 180px;
+}
+
+.hero-points {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.hero-point {
+  background: rgba(255, 255, 255, 0.76);
+  border: 1px solid rgba(45, 52, 54, 0.08);
+  border-radius: 999px;
+  color: var(--color-text-muted);
+  display: inline-flex;
+  font-size: 0.86rem;
+  font-weight: 600;
+  padding: 8px 12px;
+}
+
 .weather-card {
   min-height: 240px;
 }
@@ -179,6 +208,14 @@
 
   .page-title {
     font-size: 1.9rem;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+  }
+
+  .button-hero {
+    width: 100%;
   }
 
   .weather-card {

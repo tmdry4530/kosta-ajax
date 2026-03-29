@@ -159,7 +159,7 @@
   }
 
   function bindEvents() {
-    $('#refresh-location-button').on('click', function() {
+    $('#refresh-location-button, #hero-refresh-button').on('click', function() {
       requestCurrentLocation();
     });
 

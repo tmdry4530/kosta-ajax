@@ -24,20 +24,22 @@
 }
 
 .filter-chip {
-  background: rgba(255, 255, 255, 0.76);
+  background: rgba(255, 255, 255, 0.82);
   border: 1px solid var(--color-border);
   border-radius: 999px;
   min-height: 40px;
   padding: 0 16px;
-  transition: background var(--transition-base), color var(--transition-base), border-color var(--transition-base);
+  transition: background var(--transition-base), color var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
 }
 
 .filter-chip.is-active,
 .filter-chip:hover,
 .filter-chip:focus-visible {
-  background: rgba(255, 107, 53, 0.12);
-  border-color: rgba(255, 107, 53, 0.22);
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.18), rgba(255, 107, 53, 0.08));
+  border-color: rgba(255, 107, 53, 0.35);
+  box-shadow: 0 8px 16px rgba(255, 107, 53, 0.14);
   color: var(--color-primary-dark);
+  font-weight: 700;
 }
 
 .search-content-grid {
@@ -73,7 +75,7 @@
 }
 
 .result-card {
-  background: rgba(255, 255, 255, 0.78);
+  background: rgba(255, 255, 255, 0.84);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   display: grid;
@@ -84,8 +86,8 @@
 
 .result-card.is-highlighted,
 .result-card:hover {
-  border-color: rgba(255, 107, 53, 0.24);
-  box-shadow: var(--shadow-card);
+  border-color: rgba(255, 107, 53, 0.28);
+  box-shadow: 0 16px 24px rgba(255, 107, 53, 0.12);
   transform: translateY(-2px);
 }
 
@@ -96,16 +98,75 @@
   justify-content: space-between;
 }
 
-.result-card-title {
-  font-size: 1.08rem;
+.result-card-primary {
+  display: grid;
+  gap: 8px;
+}
+
+.result-card-topline {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.result-rank,
+.result-distance,
+.result-chip {
+  align-items: center;
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 0.78rem;
   font-weight: 700;
-  margin-bottom: 6px;
+  gap: 6px;
+  padding: 6px 10px;
+}
+
+.result-rank {
+  background: rgba(78, 205, 196, 0.14);
+  color: #11817a;
+}
+
+.result-distance {
+  background: rgba(255, 107, 53, 0.14);
+  color: var(--color-primary-dark);
+}
+
+.result-card-title {
+  font-size: 1.12rem;
+  font-weight: 700;
+  line-height: 1.35;
 }
 
 .result-card-subtitle,
 .result-card-meta {
   color: var(--color-text-muted);
   font-size: 0.94rem;
+}
+
+.result-card-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.result-chip {
+  background: rgba(45, 52, 54, 0.06);
+  color: var(--color-text-muted);
+}
+
+.result-chip-location {
+  background: rgba(116, 185, 255, 0.14);
+  color: #2163a8;
+}
+
+.result-card-meta {
+  display: grid;
+  gap: 6px;
+}
+
+.result-card-address {
+  color: var(--color-text);
+  font-weight: 500;
 }
 
 .result-card-actions {
