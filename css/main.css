@@ -164,6 +164,54 @@
   font-size: 0.88rem;
 }
 
+@media (max-width: 767px) {
+  .hero-section {
+    padding-top: 20px;
+  }
+
+  .hero-grid {
+    gap: 14px;
+  }
+
+  .hero-copy {
+    max-width: none;
+  }
+
+  .page-title {
+    font-size: 1.9rem;
+  }
+
+  .weather-card {
+    min-height: 0;
+  }
+
+  .weather-main {
+    align-items: flex-start;
+  }
+
+  .weather-icon {
+    height: 64px;
+    width: 64px;
+  }
+
+  .weather-summary {
+    padding: 16px;
+  }
+
+  .recommendation-grid {
+    gap: 14px;
+  }
+
+  .recommendation-card {
+    min-height: 0;
+    padding: 18px;
+  }
+
+  .forecast-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (min-width: 768px) {
   .hero-grid {
     grid-template-columns: 1.1fr 0.9fr;

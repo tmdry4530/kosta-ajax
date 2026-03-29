@@ -59,10 +59,23 @@
 }
 
 @media (max-width: 767px) {
+  .favorites-main {
+    padding-top: 18px;
+  }
+
+  .favorites-panel {
+    min-height: 0;
+  }
+
   .favorites-header,
   .favorite-card-header {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .favorite-card {
+    gap: 12px;
+    padding: 16px;
   }
 
   .favorite-actions .button,

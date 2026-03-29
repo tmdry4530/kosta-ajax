@@ -99,6 +99,10 @@ body.theme-default {
   gap: 10px;
 }
 
+.mobile-bottom-nav {
+  display: none;
+}
+
 .site-footer {
   border-top: 1px solid rgba(45, 52, 54, 0.06);
   margin-top: 56px;
@@ -355,19 +359,49 @@ body.theme-default {
 }
 
 @media (max-width: 767px) {
-  .header-inner,
+  body {
+    padding-bottom: calc(86px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .container {
+    padding: 0 16px;
+  }
+
+  .site-header {
+    background: rgba(255, 248, 240, 0.94);
+  }
+
+  .header-inner {
+    align-items: center;
+    min-height: 66px;
+  }
+
   .footer-inner,
   .section-heading {
     align-items: flex-start;
     flex-direction: column;
   }
 
+  .brand {
+    font-size: 1rem;
+  }
+
+  .brand-mark {
+    font-size: 1.4rem;
+  }
+
   .header-nav {
-    width: 100%;
+    gap: 8px;
   }
 
   .header-nav .button {
-    flex: 1;
+    min-height: 38px;
+    padding: 0 12px;
+  }
+
+  .panel {
+    border-radius: 18px;
+    padding: 18px;
   }
 
   .manual-location-form {
@@ -375,6 +409,53 @@ body.theme-default {
   }
 
   .section-block {
-    padding: 30px 0;
+    padding: 28px 0;
+  }
+
+  .mobile-bottom-nav {
+    align-items: center;
+    backdrop-filter: blur(18px);
+    background: rgba(255, 255, 255, 0.94);
+    border-top: 1px solid rgba(45, 52, 54, 0.08);
+    bottom: 0;
+    display: grid;
+    gap: 8px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    left: 0;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+    position: fixed;
+    right: 0;
+    z-index: 50;
+  }
+
+  .mobile-bottom-link {
+    align-items: center;
+    border-radius: 16px;
+    color: var(--color-text-muted);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    justify-content: center;
+    min-height: 54px;
+    padding: 6px 8px;
+  }
+
+  .mobile-bottom-link.is-current {
+    background: rgba(255, 107, 53, 0.12);
+    color: var(--color-primary-dark);
+    font-weight: 700;
+  }
+
+  .mobile-bottom-icon {
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+
+  .mobile-bottom-text {
+    font-size: 0.78rem;
+  }
+
+  .site-footer {
+    margin-top: 36px;
   }
 }

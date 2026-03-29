@@ -165,6 +165,86 @@
   margin-top: 6px;
 }
 
+@media (max-width: 767px) {
+  .search-main {
+    padding-top: 18px;
+  }
+
+  .search-layout {
+    gap: 14px;
+  }
+
+  .search-controls-panel {
+    gap: 12px;
+    padding-bottom: 14px;
+    position: sticky;
+    top: 74px;
+    z-index: 20;
+  }
+
+  .search-form {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-group {
+    flex-wrap: nowrap;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+
+  .filter-group::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filter-chip {
+    flex: 0 0 auto;
+    min-height: 38px;
+    padding: 0 14px;
+  }
+
+  .search-content-grid {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .results-panel {
+    min-height: 0;
+    order: 1;
+  }
+
+  .map-panel {
+    min-height: 0;
+    order: 2;
+  }
+
+  .results-list {
+    min-height: 0;
+  }
+
+  .map-canvas {
+    height: 280px;
+  }
+
+  .result-card {
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .result-card-header,
+  .map-panel-header,
+  .results-header {
+    gap: 10px;
+    flex-direction: column;
+  }
+
+  .result-card-actions .button,
+  .result-card-actions a {
+    width: 100%;
+  }
+}
+
 @media (min-width: 768px) {
   .search-form {
     grid-template-columns: minmax(0, 1fr) auto auto;
