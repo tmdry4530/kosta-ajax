@@ -77,6 +77,7 @@ WeatherEats/
 │   └── food/
 ├── AGENTS.md
 ├── JS-LOGIC.md
+├── weathereats_ui_feedback.md
 ├── .gitignore
 └── README.md
 ```
@@ -169,3 +170,5 @@ JS 로직만 빠르게 이해하고 싶다면 아래 문서를 보면 됩니다.
 - `JS-LOGIC.md` : `js/` 폴더 기준 로직 흐름, 파일 역할, 데이터 흐름 설명
 
 - `404.html` : GitHub Pages에서 잘못된 주소 접근 시 보여줄 사용자 안내 페이지
+
+- `weathereats_ui_feedback.md` : 현재 UI에 대한 장점/개선점/우선순위 피드백 문서
