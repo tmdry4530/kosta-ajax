@@ -57,6 +57,7 @@ WeatherEats/
 ├── index.html
 ├── search.html
 ├── favorites.html
+├── 404.html
 ├── css/
 │   ├── reset.css
 │   ├── common.css
@@ -108,7 +109,14 @@ python3 -m http.server 4173
 http://127.0.0.1:4173/index.html
 ```
 
-## 6. 카카오 개발자 설정 체크리스트
+
+## 6. 배포 주소
+
+- GitHub Pages: https://tmdry4530.github.io/kosta-ajax/
+- 메인 페이지: https://tmdry4530.github.io/kosta-ajax/index.html
+- 검색 페이지 예시: https://tmdry4530.github.io/kosta-ajax/search.html?keyword=%EB%A7%9B%EC%A7%91
+
+## 7. 카카오 개발자 설정 체크리스트
 
 ### Kakao Maps / Local 사용 전 확인
 - REST API 키 발급
@@ -119,7 +127,7 @@ http://127.0.0.1:4173/index.html
   - `http://127.0.0.1:4173`
   - 배포 시 `https://tmdry4530.github.io`
 
-## 7. 발표/스크린샷용 데모 모드
+## 8. 발표/스크린샷용 데모 모드
 
 실 API 대신 안정적인 예시 데이터를 사용해서 검색 화면을 연출하고 싶으면 `demo=1` 쿼리를 붙이면 됩니다.
 
@@ -134,28 +142,30 @@ http://127.0.0.1:4173/search.html?keyword=맛집&lat=37.3943&lon=126.9568&page=1
 - 필터 / 페이지네이션 / 즐겨찾기 저장 흐름을 안정적으로 시연 가능
 - 실제 Kakao 서비스가 잠시 불안정해도 화면 시연 가능
 
-## 8. 실제 서비스 / 데모 fallback 동작
+## 9. 실제 서비스 / 데모 fallback 동작
 
 - Kakao Local API가 정상 동작하면 **실데이터 우선**으로 검색합니다.
 - Kakao에서 `App disabled OPEN_MAP_AND_LOCAL service`를 반환하면 자동으로 **데모 데이터 fallback**을 보여줍니다.
 - 따라서 발표/시연/스크린샷 상황에서도 UI 흐름이 끊기지 않습니다.
 
-## 9. 예외 처리
+## 10. 예외 처리
 
 - 위치 권한 거부 시 기본 좌표 fallback
 - OpenWeatherMap / Kakao API 오류 메시지 분기
 - 검색 결과 없음 상태 UI
 - localStorage 저장 실패 시 오래된 즐겨찾기부터 줄여 재시도
 
-## 10. 제출용 메모
+## 11. 제출용 메모
 
 - 기본 개발 흐름에서는 `js/config.js`를 `.gitignore`로 유지합니다.
 - 다만 현재 저장소는 학교 과제 제출/데모용이라 `js/config.js`가 예외적으로 포함될 수 있습니다.
 - 브라우저에서 직접 API 키를 사용하므로 완전한 비밀 관리는 어렵습니다.
 
 
-## 11. 코드 이해용 문서
+## 12. 코드 이해용 문서
 
 JS 로직만 빠르게 이해하고 싶다면 아래 문서를 보면 됩니다.
 
 - `JS-LOGIC.md` : `js/` 폴더 기준 로직 흐름, 파일 역할, 데이터 흐름 설명
+
+- `404.html` : GitHub Pages에서 잘못된 주소 접근 시 보여줄 사용자 안내 페이지

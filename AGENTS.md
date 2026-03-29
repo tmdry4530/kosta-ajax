@@ -61,6 +61,7 @@ WeatherEats/
 ├── index.html              # 메인 (날씨 + 추천)
 ├── search.html             # 맛집 검색 (지도 + 리스트)
 ├── favorites.html          # 즐겨찾기
+├── 404.html                # GitHub Pages 404 페이지
 ├── css/
 │   ├── reset.css           # CSS 리셋
 │   ├── common.css          # 공통 (헤더, 푸터, CSS 변수)
