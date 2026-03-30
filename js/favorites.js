@@ -177,17 +177,12 @@
         return item.id === placeId;
       });
 
-      if (!favorite) {
+      if (!favorite || !favorite.place_url) {
+        app.ui.showBanner($('#favorites-status'), 'error', '카카오맵 링크를 찾을 수 없어요.');
         return;
       }
 
-      app.utils.moveToPage('search.html', {
-        keyword: favorite.place_name,
-        lat: favorite.y,
-        lon: favorite.x,
-        placeId: favorite.id,
-        page: 1
-      });
+      window.open(favorite.place_url, '_blank', 'noopener,noreferrer');
     });
 
     $('#clear-favorites-button').on('click', function() {
