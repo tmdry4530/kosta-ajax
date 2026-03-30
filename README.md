@@ -58,6 +58,9 @@ WeatherEats/
 ├── search.html
 ├── favorites.html
 ├── 404.html
+├── .github/
+│   └── workflows/
+│       └── pages.yml
 ├── css/
 │   ├── reset.css
 │   ├── common.css
@@ -85,7 +88,7 @@ WeatherEats/
 
 ### 1) API 키 설정
 
-`js/config.js`에 아래 값을 입력합니다.
+로컬 실행 시에는 `js/config.js`에 아래 값을 입력합니다. 저장소 기본값은 placeholder이며, GitHub Pages 배포는 GitHub Actions Secrets를 사용합니다.
 
 ```js
 'use strict';
@@ -169,3 +172,15 @@ JS 로직만 빠르게 이해하고 싶다면 아래 문서를 보면 됩니다.
 - `JS-LOGIC.md` : `js/` 폴더 기준 로직 흐름, 파일 역할, 데이터 흐름 설명
 
 - `404.html` : GitHub Pages에서 잘못된 주소 접근 시 보여줄 사용자 안내 페이지
+
+
+## 13. GitHub Pages 배포와 API 키 관리
+
+이 저장소는 보안을 위해 저장소의 `js/config.js`에는 placeholder만 보관합니다.
+실제 GitHub Pages 배포 시에는 `.github/workflows/pages.yml`이 GitHub Actions Secrets를 읽어서 배포 아티팩트 안의 `js/config.js`를 생성합니다.
+
+사용하는 Secrets 이름:
+
+- `WEATHER_API_KEY`
+- `KAKAO_REST_KEY`
+- `KAKAO_JS_KEY`
