@@ -13,7 +13,13 @@
       label: '안양시 동안구'
     },
     pageSize: 10,
-    searchRadius: 3000
+    searchRadius: 3000,
+    geolocation: {
+      desiredAccuracy: 300,
+      retryAccuracyThreshold: 1200,
+      timeout: 12000,
+      retryTimeout: 20000
+    }
   }, app.constants || {});
 
   app.utils = $.extend(app.utils || {}, {
@@ -28,6 +34,20 @@
 
     formatTemperature: function(value) {
       return Math.round(Number(value || 0)) + '°C';
+    },
+
+    formatDistance: function(value) {
+      var distance = Number(value || 0);
+
+      if (!Number.isFinite(distance)) {
+        return '-';
+      }
+
+      if (distance >= 1000) {
+        return (Math.round(distance / 100) / 10) + 'km';
+      }
+
+      return Math.round(distance) + 'm';
     },
 
     formatSavedDate: function(value) {
@@ -155,6 +175,21 @@
 
     getCurrentPosition: function() {
       return $.Deferred(function(deferred) {
+        function readPosition(options) {
+          return $.Deferred(function(positionDeferred) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+              positionDeferred.resolve({
+                lat: position.coords.latitude,
+                lon: position.coords.longitude,
+                accuracy: Number(position.coords.accuracy || 0),
+                fetchedAt: new Date().toISOString()
+              });
+            }, function(error) {
+              positionDeferred.reject(error);
+            }, options);
+          }).promise();
+        }
+
         if (!navigator.geolocation) {
           deferred.reject({
             code: 'UNSUPPORTED',
@@ -163,26 +198,49 @@
           return;
         }
 
-        navigator.geolocation.getCurrentPosition(function(position) {
-          deferred.resolve({
-            lat: position.coords.latitude,
-            lon: position.coords.longitude
-          });
-        }, function(error) {
+        var geoConfig = app.constants.geolocation || {};
+        var baseOptions = {
+          enableHighAccuracy: true,
+          timeout: geoConfig.timeout || 12000,
+          maximumAge: 0
+        };
+
+        readPosition(baseOptions)
+          .done(function(position) {
+            if (position.accuracy && position.accuracy <= (geoConfig.retryAccuracyThreshold || 1200)) {
+              deferred.resolve(position);
+              return;
+            }
+
+            readPosition({
+              enableHighAccuracy: true,
+              timeout: geoConfig.retryTimeout || 20000,
+              maximumAge: 0
+            })
+              .done(function(retriedPosition) {
+                deferred.resolve($.extend({}, retriedPosition, {
+                  retried: true
+                }));
+              })
+              .fail(function() {
+                deferred.resolve($.extend({}, position, {
+                  warning: '위치 정확도가 다소 낮아요. 실내에서는 오차가 커질 수 있어요.'
+                }));
+              });
+          })
+          .fail(function(error) {
           var message = '위치 정보를 가져오지 못했어요.';
 
           if (error && error.code === error.PERMISSION_DENIED) {
             message = '위치 권한이 필요해요! 설정에서 허용해주세요.';
+          } else if (error && (error.code === 3 || error.code === error.TIMEOUT)) {
+            message = '위치 확인 시간이 초과됐어요. 잠시 후 다시 시도해주세요.';
           }
 
           deferred.reject({
             code: error && error.code ? error.code : 'POSITION_ERROR',
             message: message
           });
-        }, {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 600000
         });
       }).promise();
     }

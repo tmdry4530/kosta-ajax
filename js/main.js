@@ -5,8 +5,10 @@
   var state = {
     lat: app.constants.defaultCoords.lat,
     lon: app.constants.defaultCoords.lon,
+    accuracy: null,
     locationSource: 'default',
     locationDetails: null,
+    locationWarning: '',
     updatedAt: null
   };
 
@@ -38,11 +40,21 @@
       updatedLabel = String(state.updatedAt.getHours()).padStart(2, '0') + ':' + String(state.updatedAt.getMinutes()).padStart(2, '0');
     }
 
+    var accuracyLabel = '';
+
+    if (Number.isFinite(state.accuracy) && state.accuracy > 0) {
+      accuracyLabel = app.utils.formatDistance(state.accuracy);
+    }
+
     var locationDetail = '';
 
     if (weather.locationName && weather.locationName !== primaryLocation) {
       locationDetail = '날씨 기준 도시: ' + weather.locationName;
     }
+
+    var locationWarningHtml = state.locationWarning
+      ? '<div class="weather-meta"><span class="result-badge">⚠ ' + app.utils.escapeHtml(state.locationWarning) + '</span></div>'
+      : '';
 
     var extrasHtml = weather.extraMessages.map(function(message) {
       return '<span class="result-badge">💡 ' + app.utils.escapeHtml(message) + '</span>';
@@ -67,6 +79,7 @@
       '<div class="weather-location-meta">',
       '  <span class="result-badge">🧭 ' + app.utils.escapeHtml(sourceLabel) + '</span>',
       '  <span class="result-badge">📐 ' + app.utils.escapeHtml(Number(state.lat).toFixed(4) + ', ' + Number(state.lon).toFixed(4)) + '</span>',
+      accuracyLabel ? '  <span class="result-badge">🎯 정확도 ' + app.utils.escapeHtml(accuracyLabel) + '</span>' : '',
       '  <span class="result-badge">🗺 반경 ' + app.utils.escapeHtml(radiusLabel) + '</span>',
       updatedLabel ? '  <span class="result-badge">⏱ ' + app.utils.escapeHtml(updatedLabel) + ' 기준</span>' : '',
       '</div>',
@@ -77,6 +90,7 @@
       '<div class="weather-summary">',
       '  <strong>' + app.utils.escapeHtml(weather.summaryMessage) + '</strong>',
       '  <p>오늘 날씨를 바탕으로 어울리는 메뉴를 바로 추천해드릴게요.</p>',
+      locationWarningHtml,
       extrasHtml ? '<div class="weather-meta">' + extrasHtml + '</div>' : '',
       '</div>'
     ].join('');
@@ -167,7 +181,9 @@
 
     state.lat = lat;
     state.lon = lon;
+    state.accuracy = Number.isFinite(settings.accuracy) ? settings.accuracy : null;
     state.locationSource = settings.source;
+    state.locationWarning = settings.locationWarning || '';
     state.updatedAt = new Date();
 
     app.ui.showBanner(cache.$status, 'info', statusMessage || '날씨와 추천 메뉴를 불러오는 중이에요.');
@@ -203,20 +219,24 @@
     app.utils.getCurrentPosition()
       .done(function(coords) {
         loadWeatherByCoords(coords.lat, coords.lon, '현재 위치 기준으로 추천을 준비하고 있어요.', {
-          source: 'current'
+          source: 'current',
+          accuracy: coords.accuracy,
+          locationWarning: coords.warning || ''
         });
       })
       .fail(function(error) {
         app.ui.showBanner(cache.$status, 'info', error.message + ' 기본 위치로 먼저 보여드릴게요.');
         loadWeatherByCoords(app.constants.defaultCoords.lat, app.constants.defaultCoords.lon, app.constants.defaultCoords.label + ' 기준으로 추천을 불러오는 중이에요.', {
-          source: 'default'
+          source: 'default',
+          locationWarning: '위치 권한이 없어서 기본 위치를 사용 중이에요.'
         });
         app.ui.renderManualLocationForm(cache.$manualPanel, {
           title: '위치를 직접 입력해 다시 추천받기',
           description: '권한 허용이 어렵다면 위도와 경도로 원하는 지역을 직접 지정할 수 있어요.',
           onSubmit: function(coords) {
             loadWeatherByCoords(coords.lat, coords.lon, '입력한 위치 기준으로 다시 불러오는 중이에요.', {
-              source: 'manual'
+              source: 'manual',
+              accuracy: null
             });
           }
         });

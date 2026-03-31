@@ -12,6 +12,7 @@
     visiblePlaces: [],
     meta: null,
     focusPlaceId: '',
+    accuracy: null,
     demoMode: false
   };
   var cache = {};
@@ -226,8 +227,14 @@
         .done(function(coords) {
           state.lat = coords.lat;
           state.lon = coords.lon;
+          state.accuracy = Number.isFinite(coords.accuracy) ? coords.accuracy : null;
           app.kakao.setCenter(state.lat, state.lon);
           app.ui.hideManualLocationForm(cache.$manualLocation);
+
+          if (coords.warning) {
+            app.ui.showBanner(cache.$status, 'info', coords.warning + ' 그래도 현재 위치 기준으로 다시 검색해볼게요.');
+          }
+
           search($.trim(cache.$input.val()) || state.keyword || '맛집', 1);
         })
         .fail(function(error) {
@@ -240,6 +247,7 @@
             onSubmit: function(coords) {
               state.lat = coords.lat;
               state.lon = coords.lon;
+              state.accuracy = null;
               app.kakao.setCenter(state.lat, state.lon);
               search($.trim(cache.$input.val()) || state.keyword || '맛집', 1);
             }
