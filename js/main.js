@@ -4,7 +4,10 @@
   var app = window.WeatherEats = window.WeatherEats || {};
   var state = {
     lat: app.constants.defaultCoords.lat,
-    lon: app.constants.defaultCoords.lon
+    lon: app.constants.defaultCoords.lon,
+    locationSource: 'default',
+    locationDetails: null,
+    updatedAt: null
   };
 
   function cacheElements() {
@@ -18,6 +21,29 @@
   }
 
   function renderWeatherCard(weather) {
+    var primaryLocation = state.locationDetails && state.locationDetails.regionLabel
+      ? state.locationDetails.regionLabel
+      : weather.locationName;
+    var sourceLabel = {
+      current: '현재 위치',
+      manual: '직접 입력 위치',
+      default: '기본 위치'
+    }[state.locationSource] || '위치 정보';
+    var radiusLabel = app.constants.searchRadius % 1000 === 0
+      ? (app.constants.searchRadius / 1000) + 'km'
+      : app.constants.searchRadius + 'm';
+    var updatedLabel = '';
+
+    if (state.updatedAt instanceof Date && !Number.isNaN(state.updatedAt.getTime())) {
+      updatedLabel = String(state.updatedAt.getHours()).padStart(2, '0') + ':' + String(state.updatedAt.getMinutes()).padStart(2, '0');
+    }
+
+    var locationDetail = '';
+
+    if (weather.locationName && weather.locationName !== primaryLocation) {
+      locationDetail = '날씨 기준 도시: ' + weather.locationName;
+    }
+
     var extrasHtml = weather.extraMessages.map(function(message) {
       return '<span class="result-badge">💡 ' + app.utils.escapeHtml(message) + '</span>';
     }).join('');
@@ -25,8 +51,9 @@
     var html = [
       '<div class="weather-card-header">',
       '  <div>',
-      '    <p class="section-kicker">현재 위치</p>',
-      '    <h2 id="weather-heading" class="section-title weather-location">📍 ' + app.utils.escapeHtml(weather.locationName) + '</h2>',
+      '    <p class="section-kicker">' + app.utils.escapeHtml(sourceLabel) + '</p>',
+      '    <h2 id="weather-heading" class="section-title weather-location">📍 ' + app.utils.escapeHtml(primaryLocation) + '</h2>',
+      locationDetail ? '    <p class="weather-location-detail">' + app.utils.escapeHtml(locationDetail) + '</p>' : '',
       '  </div>',
       '  <span class="result-badge">' + app.utils.escapeHtml(weather.weatherMain) + '</span>',
       '</div>',
@@ -36,6 +63,12 @@
       '    <div class="weather-temp">' + app.utils.escapeHtml(app.utils.formatTemperature(weather.temp)) + '</div>',
       '    <p class="weather-description">' + app.utils.escapeHtml(weather.description) + '</p>',
       '  </div>',
+      '</div>',
+      '<div class="weather-location-meta">',
+      '  <span class="result-badge">🧭 ' + app.utils.escapeHtml(sourceLabel) + '</span>',
+      '  <span class="result-badge">📐 ' + app.utils.escapeHtml(Number(state.lat).toFixed(4) + ', ' + Number(state.lon).toFixed(4)) + '</span>',
+      '  <span class="result-badge">🗺 반경 ' + app.utils.escapeHtml(radiusLabel) + '</span>',
+      updatedLabel ? '  <span class="result-badge">⏱ ' + app.utils.escapeHtml(updatedLabel) + ' 기준</span>' : '',
       '</div>',
       '<div class="weather-meta">',
       '  <span class="result-badge">💧 습도 ' + app.utils.escapeHtml(weather.humidity) + '%</span>',
@@ -110,28 +143,54 @@
     });
   }
 
-  function loadWeatherByCoords(lat, lon, statusMessage) {
+  function resolveLocationDetails(lat, lon) {
+    return $.Deferred(function(deferred) {
+      if (!app.kakao || !app.kakao.reverseGeocodeRegion) {
+        deferred.resolve(null);
+        return;
+      }
+
+      app.kakao.reverseGeocodeRegion(lat, lon)
+        .done(function(locationDetails) {
+          deferred.resolve(locationDetails);
+        })
+        .fail(function() {
+          deferred.resolve(null);
+        });
+    }).promise();
+  }
+
+  function loadWeatherByCoords(lat, lon, statusMessage, options) {
+    var settings = $.extend({
+      source: 'default'
+    }, options || {});
+
     state.lat = lat;
     state.lon = lon;
+    state.locationSource = settings.source;
+    state.updatedAt = new Date();
 
     app.ui.showBanner(cache.$status, 'info', statusMessage || '날씨와 추천 메뉴를 불러오는 중이에요.');
     cache.$weatherCard.html('<div class="skeleton-block skeleton-block-lg"></div>');
     cache.$forecast.html('<div class="skeleton-block" style="height: 120px;"></div>');
     cache.$recommendations.html('<div class="skeleton-block" style="height: 220px;"></div>');
 
-    $.when(app.weather.fetchCurrentWeather(lat, lon), app.weather.fetchForecast(lat, lon))
-      .done(function(currentResponse, forecastResponse) {
+    $.when(app.weather.fetchCurrentWeather(lat, lon), app.weather.fetchForecast(lat, lon), resolveLocationDetails(lat, lon))
+      .done(function(currentResponse, forecastResponse, locationDetails) {
         var weather = app.weather.normalizeCurrentWeather(currentResponse[0]);
         var forecast = app.weather.extractForecastDays(forecastResponse[0]);
+        var displayLocation = locationDetails && locationDetails.regionLabel ? locationDetails.regionLabel : weather.locationName;
 
+        state.locationDetails = locationDetails;
         renderWeatherCard(weather);
         renderForecast(forecast);
         renderRecommendations(weather.recommendations);
         updateRecommendationCounts(weather.recommendations);
-        app.ui.showBanner(cache.$status, 'success', weather.locationName + ' 기준으로 추천을 준비했어요.');
+        app.ui.showBanner(cache.$status, 'success', displayLocation + ' 기준으로 추천을 준비했어요.');
         app.ui.hideManualLocationForm(cache.$manualPanel);
       })
       .fail(function(error) {
+        state.locationDetails = null;
         var message = app.utils.buildApiErrorMessage('weather', error, '날씨 정보를 불러오지 못했어요. 잠시 후 다시 시도해주세요.');
         app.ui.showBanner(cache.$status, 'error', message);
         cache.$weatherCard.html('<div class="empty-state is-visible"><h3>날씨 정보를 불러오지 못했어요.</h3><p>API 키 설정과 네트워크 상태를 확인해주세요.</p></div>');
@@ -143,16 +202,22 @@
   function requestCurrentLocation() {
     app.utils.getCurrentPosition()
       .done(function(coords) {
-        loadWeatherByCoords(coords.lat, coords.lon, '현재 위치 기준으로 추천을 준비하고 있어요.');
+        loadWeatherByCoords(coords.lat, coords.lon, '현재 위치 기준으로 추천을 준비하고 있어요.', {
+          source: 'current'
+        });
       })
       .fail(function(error) {
         app.ui.showBanner(cache.$status, 'info', error.message + ' 기본 위치로 먼저 보여드릴게요.');
-        loadWeatherByCoords(app.constants.defaultCoords.lat, app.constants.defaultCoords.lon, app.constants.defaultCoords.label + ' 기준으로 추천을 불러오는 중이에요.');
+        loadWeatherByCoords(app.constants.defaultCoords.lat, app.constants.defaultCoords.lon, app.constants.defaultCoords.label + ' 기준으로 추천을 불러오는 중이에요.', {
+          source: 'default'
+        });
         app.ui.renderManualLocationForm(cache.$manualPanel, {
           title: '위치를 직접 입력해 다시 추천받기',
           description: '권한 허용이 어렵다면 위도와 경도로 원하는 지역을 직접 지정할 수 있어요.',
           onSubmit: function(coords) {
-            loadWeatherByCoords(coords.lat, coords.lon, '입력한 위치 기준으로 다시 불러오는 중이에요.');
+            loadWeatherByCoords(coords.lat, coords.lon, '입력한 위치 기준으로 다시 불러오는 중이에요.', {
+              source: 'manual'
+            });
           }
         });
       });

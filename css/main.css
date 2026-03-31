@@ -62,11 +62,24 @@
   font-weight: 600;
 }
 
+.weather-location-detail {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  margin-top: 6px;
+}
+
 .weather-main {
   align-items: center;
   display: flex;
   gap: 16px;
   margin-top: 20px;
+}
+
+.weather-location-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
 }
 
 .weather-icon {
@@ -224,6 +237,10 @@
 
   .weather-main {
     align-items: flex-start;
+  }
+
+  .weather-location-meta {
+    gap: 8px;
   }
 
   .weather-icon {

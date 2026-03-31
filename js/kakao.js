@@ -120,6 +120,24 @@
     return ['음식점 > 한식', '음식점 > 일식', '음식점 > 중식', '음식점 > 양식', '음식점 > 카페'][index % 5];
   }
 
+  function selectRegionDocument(documents) {
+    var items = documents || [];
+    var preferred = null;
+
+    $.each(items, function(_, item) {
+      if (item.region_type === 'H') {
+        preferred = item;
+        return false;
+      }
+
+      if (!preferred) {
+        preferred = item;
+      }
+    });
+
+    return preferred;
+  }
+
   function buildFallbackDocuments(keyword, lat, lon) {
     var baseLat = Number(lat);
     var baseLon = Number(lon);
@@ -224,6 +242,41 @@
       mapModule.searchPlaces(keyword, lat, lon, 1, 1)
         .done(function(response) {
           deferred.resolve(response.meta ? Math.min(response.meta.pageable_count || 0, 45) : 0);
+        })
+        .fail(function(error) {
+          deferred.reject(error);
+        });
+    }).promise();
+  };
+
+  mapModule.reverseGeocodeRegion = function(lat, lon) {
+    var configError = ensureSearchConfig();
+
+    if (configError) {
+      return configError;
+    }
+
+    return $.Deferred(function(deferred) {
+      $.ajax({
+        url: 'https://dapi.kakao.com/v2/local/geo/coord2regioncode.json',
+        method: 'GET',
+        headers: {
+          Authorization: 'KakaoAK ' + window.CONFIG.KAKAO_REST_KEY
+        },
+        data: {
+          x: lon,
+          y: lat,
+          input_coord: 'WGS84'
+        }
+      })
+        .done(function(response) {
+          var region = selectRegionDocument(response.documents);
+
+          deferred.resolve(region ? {
+            regionLabel: region.address_name || '',
+            regionType: region.region_type || '',
+            code: region.code || ''
+          } : null);
         })
         .fail(function(error) {
           deferred.reject(error);
