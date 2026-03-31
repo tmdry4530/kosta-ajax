@@ -45,6 +45,32 @@
             <button class="filter-chip" type="button" data-filter="양식">양식</button>
             <button class="filter-chip" type="button" data-filter="카페">카페</button>
           </div>
+          <div class="search-utility-bar" aria-label="검색 보조 옵션">
+            <label class="search-select-group" for="distance-filter">
+              <span class="search-select-label">거리</span>
+              <select id="distance-filter" class="search-select">
+                <option value="3000">3km</option>
+                <option value="1000">1km</option>
+                <option value="500">500m</option>
+              </select>
+            </label>
+            <label class="search-select-group" for="sort-filter">
+              <span class="search-select-label">정렬</span>
+              <select id="sort-filter" class="search-select">
+                <option value="distance">거리순</option>
+                <option value="name">이름순</option>
+                <option value="category">카테고리순</option>
+              </select>
+            </label>
+            <label class="search-select-group" for="travel-mode">
+              <span class="search-select-label">이동</span>
+              <select id="travel-mode" class="search-select">
+                <option value="walk">도보</option>
+                <option value="car">차량</option>
+              </select>
+            </label>
+          </div>
+          <div id="recent-searches" class="recent-searches" aria-live="polite"></div>
         </section>
 
         <section class="search-content-grid">
@@ -65,7 +91,10 @@
                 <p class="section-kicker">검색 결과</p>
                 <h2 class="section-title">주변 맛집 리스트</h2>
               </div>
-              <p id="results-count" class="results-count">검색 결과를 불러오는 중입니다.</p>
+              <div class="results-meta">
+                <p id="results-count" class="results-count">검색 결과를 불러오는 중입니다.</p>
+                <p id="search-data-note" class="section-caption">Kakao Local API 기준 · 검색 전</p>
+              </div>
             </div>
             <div id="results-list" class="results-list" aria-live="polite"></div>
             <nav id="pagination" class="pagination" aria-label="검색 결과 페이지"></nav>

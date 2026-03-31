@@ -6,7 +6,9 @@
 
   app.constants = $.extend(true, {
     favoriteStorageKey: 'weathereats_favorites',
+    recentSearchStorageKey: 'weathereats_recent_searches',
     maxFavorites: 50,
+    maxRecentSearches: 6,
     defaultCoords: {
       lat: 37.3943,
       lon: 126.9568,

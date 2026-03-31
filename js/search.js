@@ -8,6 +8,9 @@
     keyword: '',
     page: 1,
     filter: 'all',
+    sort: 'distance',
+    distanceLimit: app.constants.searchRadius,
+    travelMode: 'walk',
     places: [],
     visiblePlaces: [],
     meta: null,
@@ -25,6 +28,11 @@
     cache.$resultsList = $('#results-list');
     cache.$pagination = $('#pagination');
     cache.$mapSummary = $('#map-summary');
+    cache.$distanceFilter = $('#distance-filter');
+    cache.$sortFilter = $('#sort-filter');
+    cache.$travelMode = $('#travel-mode');
+    cache.$recentSearches = $('#recent-searches');
+    cache.$dataNote = $('#search-data-note');
   }
 
   function normalizePlace(doc) {
@@ -46,19 +54,139 @@
 
   function filterPlaces() {
     state.visiblePlaces = state.places.filter(function(place) {
+      var distanceNumber = Number(place.distance || 0);
+
+      if (place.distance && state.distanceLimit && distanceNumber > state.distanceLimit) {
+        return false;
+      }
+
       if (state.filter === 'all') {
         return true;
       }
 
       return place.categoryName.indexOf(state.filter) !== -1;
     });
+
+    state.visiblePlaces.sort(function(a, b) {
+      if (state.sort === 'name') {
+        return a.placeName.localeCompare(b.placeName, 'ko');
+      }
+
+      if (state.sort === 'category') {
+        return a.categoryLabel.localeCompare(b.categoryLabel, 'ko') || a.placeName.localeCompare(b.placeName, 'ko');
+      }
+
+      return Number(a.distance || Number.MAX_SAFE_INTEGER) - Number(b.distance || Number.MAX_SAFE_INTEGER);
+    });
+  }
+
+  function estimateTravelTime(distance) {
+    var distanceNumber = Number(distance || 0);
+    var speed = state.travelMode === 'car' ? 400 : 70;
+
+    if (!distanceNumber) {
+      return '예상 시간 없음';
+    }
+
+    return Math.max(1, Math.round(distanceNumber / speed)) + '분';
+  }
+
+  function readRecentSearches() {
+    var stored = window.localStorage.getItem(app.constants.recentSearchStorageKey);
+
+    if (!stored) {
+      return [];
+    }
+
+    try {
+      return JSON.parse(stored) || [];
+    } catch (error) {
+      return [];
+    }
+  }
+
+  function saveRecentSearch(keyword) {
+    var trimmed = $.trim(keyword);
+    var recent = readRecentSearches().filter(function(item) {
+      return item !== trimmed;
+    });
+
+    if (!trimmed) {
+      return;
+    }
+
+    recent.unshift(trimmed);
+    window.localStorage.setItem(app.constants.recentSearchStorageKey, JSON.stringify(recent.slice(0, app.constants.maxRecentSearches)));
+  }
+
+  function renderRecentSearches() {
+    var recent = readRecentSearches();
+
+    if (!recent.length) {
+      cache.$recentSearches.empty();
+      return;
+    }
+
+    cache.$recentSearches.html([
+      '<p class="search-select-label">최근 검색</p>',
+      '<div class="recent-search-list">',
+      recent.map(function(item) {
+        return '<button class="recent-search-chip" type="button" data-keyword="' + app.utils.escapeHtml(item) + '">' + app.utils.escapeHtml(item) + '</button>';
+      }).join(''),
+      '</div>'
+    ].join(''));
+  }
+
+  function syncAddressBar() {
+    app.utils.updateAddressBar({
+      keyword: state.keyword,
+      lat: state.lat,
+      lon: state.lon,
+      page: state.page,
+      filter: state.filter === 'all' ? '' : state.filter,
+      distance: state.distanceLimit === app.constants.searchRadius ? '' : state.distanceLimit,
+      sort: state.sort === 'distance' ? '' : state.sort,
+      travel: state.travelMode === 'walk' ? '' : state.travelMode,
+      placeId: '',
+      demo: state.demoMode ? '1' : ''
+    });
+  }
+
+  function renderDataNote() {
+    var now = new Date();
+    var timeLabel = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+
+    cache.$dataNote.text('Kakao Local API 기준 · 마지막 업데이트 ' + timeLabel);
+  }
+
+  function buildSuggestionKeywords() {
+    var suggestions = ['한식 맛집', '분식', '브런치 카페', '카페', '국밥', '초밥'];
+
+    if (/비|파전|막걸리/.test(state.keyword)) {
+      suggestions = ['파전 맛집', '해물탕', '막걸리', '칼국수'];
+    } else if (/추움|국밥|찌개|샤브/.test(state.keyword)) {
+      suggestions = ['국밥', '찌개 맛집', '샤브샤브', '라멘'];
+    } else if (/더움|냉면|빙수|아이스크림/.test(state.keyword)) {
+      suggestions = ['냉면', '빙수', '초밥', '샐러드'];
+    }
+
+    return suggestions.filter(function(item, index, array) {
+      return array.indexOf(item) === index && item !== state.keyword;
+    }).slice(0, 4);
   }
 
   function renderResults() {
     cache.$resultsList.empty();
 
     if (!state.visiblePlaces.length) {
-      cache.$resultsList.html('<div class="empty-state is-visible"><h3>주변에 찾는 맛집이 없어요.</h3><p>다른 키워드나 카테고리로 다시 검색해보세요.</p></div>');
+      var suggestions = buildSuggestionKeywords();
+      var suggestionsHtml = suggestions.length
+        ? '<div class="empty-suggestion-list">' + suggestions.map(function(keyword) {
+          return '<button class="recent-search-chip" type="button" data-keyword="' + app.utils.escapeHtml(keyword) + '">' + app.utils.escapeHtml(keyword) + '</button>';
+        }).join('') + '</div>'
+        : '';
+
+      cache.$resultsList.html('<div class="empty-state is-visible"><h3>주변에 찾는 맛집이 없어요.</h3><p>다른 거리나 카테고리로 다시 검색해보세요.</p>' + suggestionsHtml + '</div>');
       cache.$resultsCount.text('조건에 맞는 결과가 없어요.');
       app.kakao.renderMarkers([]);
       return;
@@ -74,6 +202,7 @@
         '      <div class="result-card-topline">',
         '        <span class="result-rank">No. ' + (index + 1) + '</span>',
         '        <span class="result-distance">' + app.utils.escapeHtml(place.distance ? place.distance + 'm' : '거리정보 없음') + '</span>',
+        place.distance ? '        <span class="result-distance result-distance-alt">' + app.utils.escapeHtml((state.travelMode === 'car' ? '차량 ' : '도보 ') + estimateTravelTime(place.distance)) + '</span>' : '',
         '      </div>',
         '      <div class="result-card-title">' + app.utils.escapeHtml(place.placeName) + '</div>',
         '      <p class="result-card-subtitle">' + app.utils.escapeHtml(place.categoryName || '카테고리 정보 없음') + '</p>',
@@ -154,6 +283,7 @@
   function renderInitialEmpty() {
     cache.$resultsList.html('<div class="empty-state is-visible"><h3>검색어를 입력해보세요.</h3><p>예: 국밥, 파전, 초밥, 브런치</p></div>');
     cache.$resultsCount.text('검색 전이에요. 추천 메뉴를 누르거나 직접 검색해보세요.');
+    cache.$dataNote.text('Kakao Local API 기준 · 검색 전');
   }
 
   function renderMapFallback(message) {
@@ -192,6 +322,8 @@
   function search(keyword, page) {
     state.keyword = keyword;
     state.page = page || 1;
+    saveRecentSearch(state.keyword);
+    renderRecentSearches();
 
     app.ui.showBanner(cache.$status, 'info', '맛집을 찾고 있어요.');
     cache.$resultsList.html('<div class="skeleton-block" style="height: 220px;"></div>');
@@ -203,16 +335,9 @@
         filterPlaces();
         renderResults();
         renderPagination();
-        cache.$mapSummary.text('“' + state.keyword + '” 키워드로 내 주변 3km를 검색했어요.');
-        app.utils.updateAddressBar({
-          keyword: state.keyword,
-          lat: state.lat,
-          lon: state.lon,
-          page: state.page,
-          filter: state.filter === 'all' ? '' : state.filter,
-          placeId: '',
-          demo: state.demoMode ? '1' : ''
-        });
+        renderDataNote();
+        cache.$mapSummary.text('“' + state.keyword + '” 키워드로 내 주변 ' + app.utils.formatDistance(state.distanceLimit) + '를 검색했어요.');
+        syncAddressBar();
         if (state.meta && state.meta.fallback) {
           if (state.meta.fallback_reason === 'manual-demo') {
             app.ui.showBanner(cache.$status, 'info', '스크린샷/발표용 데모 모드 결과를 보여주고 있어요.');
@@ -285,15 +410,40 @@
       $(event.currentTarget).addClass('is-active');
       filterPlaces();
       renderResults();
-      app.utils.updateAddressBar({
-        keyword: state.keyword,
-        lat: state.lat,
-        lon: state.lon,
-        page: state.page,
-        filter: state.filter === 'all' ? '' : state.filter,
-        placeId: '',
-        demo: state.demoMode ? '1' : ''
-      });
+      syncAddressBar();
+    });
+
+    cache.$distanceFilter.on('change', function() {
+      state.distanceLimit = Number($(this).val()) || app.constants.searchRadius;
+      filterPlaces();
+      renderResults();
+      renderPagination();
+      syncAddressBar();
+    });
+
+    cache.$sortFilter.on('change', function() {
+      state.sort = $(this).val() || 'distance';
+      filterPlaces();
+      renderResults();
+      syncAddressBar();
+    });
+
+    cache.$travelMode.on('change', function() {
+      state.travelMode = $(this).val() || 'walk';
+      renderResults();
+      syncAddressBar();
+    });
+
+    cache.$recentSearches.on('click', '[data-keyword]', function(event) {
+      var keyword = $(event.currentTarget).data('keyword');
+      cache.$input.val(keyword);
+      search(keyword, 1);
+    });
+
+    cache.$resultsList.on('click', '[data-keyword]', function(event) {
+      var keyword = $(event.currentTarget).data('keyword');
+      cache.$input.val(keyword);
+      search(keyword, 1);
     });
 
     cache.$pagination.on('click', '.page-button', function(event) {
@@ -340,11 +490,18 @@
     state.keyword = params.keyword || '';
     state.page = Number(params.page || 1) || 1;
     state.filter = params.filter || 'all';
+    state.sort = params.sort || 'distance';
+    state.distanceLimit = Number(params.distance || app.constants.searchRadius) || app.constants.searchRadius;
+    state.travelMode = params.travel || 'walk';
     state.focusPlaceId = params.placeId || '';
     state.demoMode = params.demo === '1';
 
     cache.$input.val(state.keyword);
     $('.filter-chip').removeClass('is-active').filter('[data-filter="' + state.filter + '"]').addClass('is-active');
+    cache.$distanceFilter.val(String(state.distanceLimit));
+    cache.$sortFilter.val(state.sort);
+    cache.$travelMode.val(state.travelMode);
+    renderRecentSearches();
 
     app.kakao.loadSdk()
       .done(function() {

@@ -55,6 +55,7 @@
     var locationWarningHtml = state.locationWarning
       ? '<div class="weather-meta"><span class="result-badge">⚠ ' + app.utils.escapeHtml(state.locationWarning) + '</span></div>'
       : '';
+    var sourceBadgesHtml = '<div class="weather-meta"><span class="result-badge">🌐 OpenWeatherMap</span><span class="result-badge">🗺 Kakao Local</span></div>';
 
     var extrasHtml = weather.extraMessages.map(function(message) {
       return '<span class="result-badge">💡 ' + app.utils.escapeHtml(message) + '</span>';
@@ -90,6 +91,7 @@
       '<div class="weather-summary">',
       '  <strong>' + app.utils.escapeHtml(weather.summaryMessage) + '</strong>',
       '  <p>오늘 날씨를 바탕으로 어울리는 메뉴를 바로 추천해드릴게요.</p>',
+      sourceBadgesHtml,
       locationWarningHtml,
       extrasHtml ? '<div class="weather-meta">' + extrasHtml + '</div>' : '',
       '</div>'
