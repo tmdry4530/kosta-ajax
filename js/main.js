@@ -145,6 +145,17 @@
     cache.$recommendations.html(html);
   }
 
+  function syncNearbySearchLinks() {
+    var href = 'search.html?' + app.utils.buildQueryString({
+      keyword: '맛집',
+      lat: state.lat,
+      lon: state.lon,
+      page: 1
+    });
+
+    $('[data-nearby-search-link]').attr('href', href);
+  }
+
   function updateRecommendationCounts(recommendations) {
     $.each(recommendations, function(_, item) {
       app.kakao.countPlaces(item.keyword, state.lat, state.lon)
@@ -206,6 +217,7 @@
     state.locationSource = settings.source;
     state.locationWarning = settings.locationWarning || '';
     state.updatedAt = new Date();
+    syncNearbySearchLinks();
 
     app.ui.showBanner(cache.$status, 'info', statusMessage || '날씨와 추천 메뉴를 불러오는 중이에요.');
     cache.$weatherCard.html('<div class="skeleton-block skeleton-block-lg"></div>');
@@ -271,6 +283,16 @@
       requestCurrentLocation();
     });
 
+    $(document).on('click', '[data-nearby-search-link]', function(event) {
+      event.preventDefault();
+      app.utils.moveToPage('search.html', {
+        keyword: '맛집',
+        lat: state.lat,
+        lon: state.lon,
+        page: 1
+      });
+    });
+
     cache.$recommendations.on('click', '.recommendation-card', function(event) {
       var keyword = $(event.currentTarget).data('keyword');
       app.utils.moveToPage('search.html', {
@@ -290,6 +312,7 @@
     }
 
     cache = cacheElements();
+    syncNearbySearchLinks();
     bindEvents();
     requestCurrentLocation();
   });

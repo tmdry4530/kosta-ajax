@@ -36,7 +36,7 @@
               <h1 class="page-title">지금 날씨에 딱 맞는 맛집을 찾아보세요.</h1>
               <p class="page-description">현재 위치의 날씨를 분석해 오늘 어울리는 메뉴를 추천하고, 주변 맛집을 지도와 함께 바로 검색해요.</p>
               <div class="hero-actions">
-                <a class="button button-primary button-hero" href="search.html?keyword=%EB%A7%9B%EC%A7%91">내 주변 맛집 찾기</a>
+                <a class="button button-primary button-hero" data-nearby-search-link href="search.html?keyword=%EB%A7%9B%EC%A7%91">내 주변 맛집 찾기</a>
                 <button id="hero-refresh-button" class="button button-ghost button-hero" type="button">지금 위치 다시 불러오기</button>
               </div>
               <div class="hero-points" aria-label="서비스 특징">
@@ -61,7 +61,7 @@
               <p class="section-kicker">추천 메뉴</p>
               <h2 class="section-title">오늘의 추천 메뉴</h2>
             </div>
-            <a class="button button-secondary" href="search.html?keyword=%EB%A7%9B%EC%A7%91">직접 검색하기</a>
+            <a class="button button-secondary" data-nearby-search-link href="search.html?keyword=%EB%A7%9B%EC%A7%91">직접 검색하기</a>
           </div>
           <div id="recommendation-list" class="recommendation-grid" aria-live="polite"></div>
         </div>
@@ -86,7 +86,7 @@
         <span class="mobile-bottom-icon">🏠</span>
         <span class="mobile-bottom-text">홈</span>
       </a>
-      <a class="mobile-bottom-link" href="search.html?keyword=%EB%A7%9B%EC%A7%91">
+      <a class="mobile-bottom-link" data-nearby-search-link href="search.html?keyword=%EB%A7%9B%EC%A7%91">
         <span class="mobile-bottom-icon">🔎</span>
         <span class="mobile-bottom-text">검색</span>
       </a>
