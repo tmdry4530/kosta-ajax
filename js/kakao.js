@@ -4,6 +4,7 @@
   var app = window.WeatherEats = window.WeatherEats || {};
   var mapModule = {};
   var fallbackTotalResults = 12;
+  var sdkPromise = null;
   var mapState = {
     map: null,
     markers: {},
@@ -12,9 +13,17 @@
     activeMarkerId: null
   };
 
-  function ensureKakaoConfig() {
-    if (!app.utils.isConfigReady(['KAKAO_REST_KEY', 'KAKAO_JS_KEY'])) {
-      return app.utils.rejectDeferred('Kakao API 키를 먼저 설정해주세요.', 'CONFIG_MISSING');
+  function ensureSearchConfig() {
+    if (!app.utils.isConfigReady(['KAKAO_REST_KEY'])) {
+      return app.utils.rejectDeferred('Kakao REST API 키를 먼저 설정해주세요.', 'CONFIG_MISSING');
+    }
+
+    return null;
+  }
+
+  function ensureMapConfig() {
+    if (!app.utils.isConfigReady(['KAKAO_JS_KEY'])) {
+      return app.utils.rejectDeferred('Kakao JavaScript 키를 먼저 설정해주세요.', 'CONFIG_MISSING');
     }
 
     return null;
@@ -162,19 +171,20 @@
   }
 
   mapModule.searchPlaces = function(keyword, lat, lon, page, size, options) {
-    var configError = ensureKakaoConfig();
     var settings = $.extend({
       forceFallback: false
     }, options || {});
-
-    if (configError) {
-      return configError;
-    }
 
     if (settings.forceFallback) {
       return $.Deferred(function(deferred) {
         deferred.resolve(buildFallbackResponse(keyword, lat, lon, page, size, 'manual-demo'));
       }).promise();
+    }
+
+    var configError = ensureSearchConfig();
+
+    if (configError) {
+      return configError;
     }
 
     return $.Deferred(function(deferred) {
@@ -222,7 +232,7 @@
   };
 
   mapModule.loadSdk = function() {
-    var configError = ensureKakaoConfig();
+    var configError = ensureMapConfig();
 
     if (configError) {
       return configError;
@@ -234,32 +244,54 @@
       }).promise();
     }
 
-    return $.Deferred(function(deferred) {
+    if (sdkPromise) {
+      return sdkPromise;
+    }
+
+    sdkPromise = $.Deferred(function(deferred) {
       var scriptId = 'kakao-map-sdk';
       var existingScript = document.getElementById(scriptId);
 
-      if (existingScript) {
-        existingScript.addEventListener('load', function() {
+      function rejectSdk() {
+        sdkPromise = null;
+        deferred.reject({ message: '카카오 지도 SDK를 불러오지 못했어요. JavaScript 키와 등록 도메인을 확인해주세요.' });
+      }
+
+      function resolveSdk() {
+        if (!window.kakao || !window.kakao.maps || !window.kakao.maps.load) {
+          rejectSdk();
+          return;
+        }
+
+        window.kakao.maps.load(function() {
           deferred.resolve(window.kakao);
-        }, { once: true });
-        existingScript.addEventListener('error', function() {
-          deferred.reject({ message: '카카오 지도 SDK를 불러오지 못했어요.' });
-        }, { once: true });
+        });
+      }
+
+      if (existingScript) {
+        if (existingScript.dataset.loaded === 'true' && window.kakao && window.kakao.maps && window.kakao.maps.load) {
+          resolveSdk();
+          return;
+        }
+
+        existingScript.addEventListener('load', resolveSdk, { once: true });
+        existingScript.addEventListener('error', rejectSdk, { once: true });
         return;
       }
 
       var script = document.createElement('script');
       script.id = scriptId;
-      script.src = 'https://dapi.kakao.com/v2/maps/sdk.js?appkey=' + window.CONFIG.KAKAO_JS_KEY + '&libraries=services';
+      script.src = 'https://dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=' + window.CONFIG.KAKAO_JS_KEY + '&libraries=services';
       script.async = true;
       script.onload = function() {
-        deferred.resolve(window.kakao);
+        script.dataset.loaded = 'true';
+        resolveSdk();
       };
-      script.onerror = function() {
-        deferred.reject({ message: '카카오 지도 SDK를 불러오지 못했어요.' });
-      };
+      script.onerror = rejectSdk;
       document.head.appendChild(script);
     }).promise();
+
+    return sdkPromise;
   };
 
   mapModule.createMap = function(containerId, lat, lon) {

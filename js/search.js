@@ -155,6 +155,16 @@
     cache.$resultsCount.text('검색 전이에요. 추천 메뉴를 누르거나 직접 검색해보세요.');
   }
 
+  function renderMapFallback(message) {
+    $('#map')
+      .addClass('map-canvas-fallback')
+      .html('<div class="map-empty-state"><h3>지도를 준비하지 못했어요.</h3><p>' + app.utils.escapeHtml(message || '카카오 지도 설정을 확인한 뒤 다시 시도해주세요.') + '</p></div>');
+  }
+
+  function clearMapFallback() {
+    $('#map').removeClass('map-canvas-fallback').empty();
+  }
+
   function search(keyword, page) {
     state.keyword = keyword;
     state.page = page || 1;
@@ -306,7 +316,22 @@
 
     app.kakao.loadSdk()
       .done(function() {
-        app.kakao.createMap('map', state.lat, state.lon);
+        clearMapFallback();
+
+        if (!app.kakao.createMap('map', state.lat, state.lon)) {
+          renderMapFallback('지도 초기화에 실패했어요. 카카오 JavaScript 키와 등록 도메인을 확인해주세요.');
+          cache.$mapSummary.text('지도를 초기화하지 못했어요. 검색 기능은 계속 사용할 수 있어요.');
+
+          if (state.keyword) {
+            search(state.keyword, state.page);
+            return;
+          }
+
+          renderInitialEmpty();
+          app.ui.showBanner(cache.$status, 'info', '지도는 없지만 검색 결과 리스트는 계속 확인할 수 있어요.');
+          return;
+        }
+
         cache.$mapSummary.text(state.demoMode ? '데모 모드 지도를 준비했어요.' : '기본 위치로 지도를 준비했어요.');
 
         if (state.keyword) {
@@ -318,6 +343,7 @@
         app.ui.showBanner(cache.$status, 'info', '추천 카드 또는 직접 검색으로 맛집을 찾아보세요.');
       })
       .fail(function(error) {
+        renderMapFallback(error && error.message ? error.message : '지도 기능을 불러오지 못했어요.');
         app.ui.showBanner(cache.$status, 'error', (error && error.message ? error.message : '지도 기능을 불러오지 못했어요.') + ' 검색도 앱 설정에 따라 함께 실패할 수 있어요.');
         cache.$mapSummary.text('지도를 불러오지 못했어요. 검색 기능은 계속 시도할 수 있어요.');
 

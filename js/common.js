@@ -86,6 +86,20 @@
       return Number.isFinite(parsed) ? parsed : null;
     },
 
+    isConfigValueReady: function(value) {
+      if (typeof value !== 'string') {
+        return false;
+      }
+
+      var trimmed = value.trim();
+
+      if (!trimmed) {
+        return false;
+      }
+
+      return !/^(YOUR_|your_)/.test(trimmed);
+    },
+
     isConfigReady: function(keys) {
       var requiredKeys = keys || [];
       var isReady = typeof window.CONFIG !== 'undefined';
@@ -95,7 +109,7 @@
       }
 
       return requiredKeys.every(function(key) {
-        return Boolean(window.CONFIG[key]);
+        return app.utils.isConfigValueReady(window.CONFIG[key]);
       });
     },
 
