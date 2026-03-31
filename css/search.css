@@ -98,6 +98,10 @@
   min-height: 640px;
 }
 
+.map-panel {
+  align-self: start;
+}
+
 .map-panel-header,
 .results-header {
   align-items: flex-start;
@@ -111,6 +115,25 @@
   display: grid;
   gap: 4px;
   justify-items: end;
+}
+
+.results-toggle {
+  justify-self: end;
+  min-height: 40px;
+  white-space: nowrap;
+}
+
+.results-panel-body {
+  display: grid;
+  gap: 18px;
+}
+
+.results-panel.is-collapsed {
+  min-height: 0;
+}
+
+.results-panel.is-collapsed .results-panel-body {
+  display: none;
 }
 
 .map-canvas {
@@ -170,6 +193,17 @@
   transform: translateY(-2px);
 }
 
+.result-card-toggle {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  display: block;
+  padding: 0;
+  text-align: left;
+  width: 100%;
+}
+
 .result-card-header {
   align-items: flex-start;
   display: flex;
@@ -225,6 +259,18 @@
 .result-card-meta {
   color: var(--color-text-muted);
   font-size: 0.94rem;
+}
+
+.result-card-toggle-text {
+  color: var(--color-primary-dark);
+  flex: 0 0 auto;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.result-card-body {
+  display: grid;
+  gap: 14px;
 }
 
 .result-card-chips {
@@ -395,6 +441,11 @@
     justify-items: start;
   }
 
+  .results-toggle {
+    justify-self: stretch;
+    width: 100%;
+  }
+
   .result-card-actions .button,
   .result-card-actions a {
     width: 100%;
@@ -412,5 +463,10 @@
 
   .search-content-grid {
     grid-template-columns: minmax(0, 1.08fr) minmax(340px, 0.92fr);
+  }
+
+  .map-panel {
+    position: sticky;
+    top: 24px;
   }
 }

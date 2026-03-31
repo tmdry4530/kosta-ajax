@@ -10,7 +10,9 @@
     markers: {},
     places: {},
     infoWindow: null,
-    activeMarkerId: null
+    activeMarkerId: null,
+    anchorMarker: null,
+    anchorMarkerImage: null
   };
 
   function ensureSearchConfig() {
@@ -45,6 +47,29 @@
     if (mapState.infoWindow) {
       mapState.infoWindow.close();
     }
+  }
+
+  function syncAnchorMarker(lat, lon) {
+    if (!mapState.map || !ensureMapReady()) {
+      return;
+    }
+
+    var position = new window.kakao.maps.LatLng(lat, lon);
+
+    if (!mapState.anchorMarker) {
+      mapState.anchorMarker = new window.kakao.maps.Marker({
+        map: mapState.map,
+        position: position,
+        image: mapModule.getAnchorMarkerImage(),
+        title: '검색 기준 위치'
+      });
+      mapState.anchorMarker.setZIndex(20);
+      return;
+    }
+
+    mapState.anchorMarker.setPosition(position);
+    mapState.anchorMarker.setMap(mapState.map);
+    mapState.anchorMarker.setZIndex(20);
   }
 
   function buildInfoContent(place) {
@@ -347,6 +372,36 @@
     return sdkPromise;
   };
 
+  mapModule.getAnchorMarkerImage = function() {
+    if (!ensureMapReady()) {
+      return null;
+    }
+
+    if (mapState.anchorMarkerImage) {
+      return mapState.anchorMarkerImage;
+    }
+
+    var svg = [
+      '<svg xmlns="http://www.w3.org/2000/svg" width="34" height="42" viewBox="0 0 34 42" fill="none">',
+      '<path d="M17 1C8.716 1 2 7.716 2 16c0 10.592 12.5 23.767 14.031 25.338a1.4 1.4 0 0 0 1.938 0C19.5 39.767 32 26.592 32 16 32 7.716 25.284 1 17 1Z" fill="#FF6B35" stroke="#FFFFFF" stroke-width="2"/>',
+      '<circle cx="17" cy="16" r="6.2" fill="#FFFFFF"/>',
+      '<circle cx="17" cy="16" r="2.8" fill="#FF6B35"/>',
+      '</svg>'
+    ].join('');
+    var imageSrc = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+
+    mapState.anchorMarkerImage = new window.kakao.maps.MarkerImage(
+      imageSrc,
+      new window.kakao.maps.Size(34, 42),
+      {
+        offset: new window.kakao.maps.Point(17, 42),
+        alt: '검색 기준 위치'
+      }
+    );
+
+    return mapState.anchorMarkerImage;
+  };
+
   mapModule.createMap = function(containerId, lat, lon) {
     if (!ensureMapReady()) {
       return null;
@@ -364,6 +419,7 @@
       level: 5
     });
     mapState.infoWindow = new window.kakao.maps.InfoWindow({ removable: true });
+    syncAnchorMarker(lat, lon);
 
     return mapState.map;
   };
@@ -374,6 +430,7 @@
     }
 
     mapState.map.setCenter(new window.kakao.maps.LatLng(lat, lon));
+    syncAnchorMarker(lat, lon);
   };
 
   mapModule.renderMarkers = function(places, handlers) {
@@ -422,7 +479,6 @@
     }
 
     activateMarker(placeId);
-    mapModule.setCenter(place.y, place.x);
   };
 
   app.kakao = mapModule;

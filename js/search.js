@@ -16,7 +16,9 @@
     meta: null,
     focusPlaceId: '',
     accuracy: null,
-    demoMode: false
+    demoMode: false,
+    resultsCollapsed: false,
+    expandedPlaceId: ''
   };
   var cache = {};
 
@@ -33,6 +35,38 @@
     cache.$travelMode = $('#travel-mode');
     cache.$recentSearches = $('#recent-searches');
     cache.$dataNote = $('#search-data-note');
+    cache.$resultsPanel = $('.results-panel');
+    cache.$resultsPanelBody = $('#results-panel-body');
+    cache.$resultsToggle = $('#results-toggle');
+  }
+
+  function isMobileViewport() {
+    return window.matchMedia('(max-width: 767px)').matches;
+  }
+
+  function setResultsCollapsed(isCollapsed) {
+    state.resultsCollapsed = Boolean(isCollapsed);
+    cache.$resultsPanel.toggleClass('is-collapsed', state.resultsCollapsed);
+    cache.$resultsToggle
+      .attr('aria-expanded', String(!state.resultsCollapsed))
+      .text(state.resultsCollapsed ? '리스트 펼치기' : '리스트 접기');
+  }
+
+  function syncExpandedCardState() {
+    cache.$resultsList.find('.result-card').each(function(_, element) {
+      var $card = $(element);
+      var isExpanded = $card.data('place-id') === state.expandedPlaceId;
+
+      $card.toggleClass('is-expanded', isExpanded);
+      $card.find('.result-card-toggle').attr('aria-expanded', String(isExpanded));
+      $card.find('.result-card-body').prop('hidden', !isExpanded);
+      $card.find('.result-card-toggle-text').text(isExpanded ? '접기' : '펼치기');
+    });
+  }
+
+  function setExpandedPlace(placeId) {
+    state.expandedPlaceId = placeId || '';
+    syncExpandedCardState();
   }
 
   function normalizePlace(doc) {
@@ -179,6 +213,7 @@
     cache.$resultsList.empty();
 
     if (!state.visiblePlaces.length) {
+      state.expandedPlaceId = '';
       var suggestions = buildSuggestionKeywords();
       var suggestionsHtml = suggestions.length
         ? '<div class="empty-suggestion-list">' + suggestions.map(function(keyword) {
@@ -192,39 +227,60 @@
       return;
     }
 
+    if (state.expandedPlaceId) {
+      var hasExpandedPlace = state.visiblePlaces.some(function(place) {
+        return place.id === state.expandedPlaceId;
+      });
+
+      if (!hasExpandedPlace) {
+        state.expandedPlaceId = '';
+      }
+    }
+
+    if (!state.expandedPlaceId && !isMobileViewport()) {
+      state.expandedPlaceId = state.visiblePlaces[0].id;
+    }
+
     var html = state.visiblePlaces.map(function(place, index) {
       var favoriteLabel = app.favorites.renderFavoriteButtonLabel(place.id);
+      var isExpanded = place.id === state.expandedPlaceId;
 
       return [
-        '<article class="result-card" data-place-id="' + app.utils.escapeHtml(place.id) + '">',
-        '  <div class="result-card-header">',
-        '    <div class="result-card-primary">',
-        '      <div class="result-card-topline">',
-        '        <span class="result-rank">No. ' + (index + 1) + '</span>',
-        '        <span class="result-distance">' + app.utils.escapeHtml(place.distance ? place.distance + 'm' : '거리정보 없음') + '</span>',
-        place.distance ? '        <span class="result-distance result-distance-alt">' + app.utils.escapeHtml((state.travelMode === 'car' ? '차량 ' : '도보 ') + estimateTravelTime(place.distance)) + '</span>' : '',
+        '<article class="result-card ' + (isExpanded ? 'is-expanded' : '') + '" data-place-id="' + app.utils.escapeHtml(place.id) + '">',
+        '  <button class="result-card-toggle" type="button" aria-expanded="' + String(isExpanded) + '">',
+        '    <div class="result-card-header">',
+        '      <div class="result-card-primary">',
+        '        <div class="result-card-topline">',
+        '          <span class="result-rank">No. ' + (index + 1) + '</span>',
+        '          <span class="result-distance">' + app.utils.escapeHtml(place.distance ? place.distance + 'm' : '거리정보 없음') + '</span>',
+        place.distance ? '          <span class="result-distance result-distance-alt">' + app.utils.escapeHtml((state.travelMode === 'car' ? '차량 ' : '도보 ') + estimateTravelTime(place.distance)) + '</span>' : '',
+        '        </div>',
+        '        <div class="result-card-title">' + app.utils.escapeHtml(place.placeName) + '</div>',
+        '        <p class="result-card-subtitle">' + app.utils.escapeHtml(place.categoryName || '카테고리 정보 없음') + '</p>',
         '      </div>',
-        '      <div class="result-card-title">' + app.utils.escapeHtml(place.placeName) + '</div>',
-        '      <p class="result-card-subtitle">' + app.utils.escapeHtml(place.categoryName || '카테고리 정보 없음') + '</p>',
+        '      <span class="result-card-toggle-text">' + (isExpanded ? '접기' : '펼치기') + '</span>',
         '    </div>',
-        '  </div>',
-        '  <div class="result-card-chips">',
-        '    <span class="result-chip">' + app.utils.escapeHtml(place.categoryLabel) + '</span>',
-        '    <span class="result-chip result-chip-location">내 주변 3km</span>',
-        '  </div>',
-        '  <div class="result-card-meta">',
-        '    <p class="result-card-address">📍 ' + app.utils.escapeHtml(place.addressName || '주소 정보 없음') + '</p>',
-        place.phone ? '    <p class="result-card-phone">☎ ' + app.utils.escapeHtml(place.phone) + '</p>' : '',
-        '  </div>',
-        '  <div class="result-card-actions">',
-        '    <button class="button button-secondary favorite-toggle" type="button">' + app.utils.escapeHtml(favoriteLabel) + '</button>',
-        '    <a class="button button-ghost" href="' + app.utils.escapeHtml(place.placeUrl) + '" target="_blank" rel="noreferrer">카카오맵 링크</a>',
+        '  </button>',
+        '  <div class="result-card-body" ' + (isExpanded ? '' : 'hidden') + '>',
+        '    <div class="result-card-chips">',
+        '      <span class="result-chip">' + app.utils.escapeHtml(place.categoryLabel) + '</span>',
+        '      <span class="result-chip result-chip-location">내 주변 3km</span>',
+        '    </div>',
+        '    <div class="result-card-meta">',
+        '      <p class="result-card-address">📍 ' + app.utils.escapeHtml(place.addressName || '주소 정보 없음') + '</p>',
+        place.phone ? '      <p class="result-card-phone">☎ ' + app.utils.escapeHtml(place.phone) + '</p>' : '',
+        '    </div>',
+        '    <div class="result-card-actions">',
+        '      <button class="button button-secondary favorite-toggle" type="button">' + app.utils.escapeHtml(favoriteLabel) + '</button>',
+        '      <a class="button button-ghost" href="' + app.utils.escapeHtml(place.placeUrl) + '" target="_blank" rel="noreferrer">카카오맵 링크</a>',
+        '    </div>',
         '  </div>',
         '</article>'
       ].join('');
     }).join('');
 
     cache.$resultsList.html(html);
+    syncExpandedCardState();
     cache.$resultsCount.text('총 ' + state.places.length + '개 중 ' + state.visiblePlaces.length + '개를 표시하고 있어요.');
 
     app.kakao.renderMarkers(state.visiblePlaces, {
@@ -267,6 +323,14 @@
   }
 
   function highlightCard(placeId, shouldScroll) {
+    if (shouldScroll && state.resultsCollapsed) {
+      setResultsCollapsed(false);
+    }
+
+    if (shouldScroll) {
+      setExpandedPlace(placeId);
+    }
+
     cache.$resultsList.find('.result-card').removeClass('is-highlighted');
     cache.$resultsList.find('[data-place-id="' + placeId + '"]').addClass('is-highlighted');
     app.kakao.focusMarker(placeId);
@@ -434,6 +498,10 @@
       syncAddressBar();
     });
 
+    cache.$resultsToggle.on('click', function() {
+      setResultsCollapsed(!state.resultsCollapsed);
+    });
+
     cache.$recentSearches.on('click', '[data-keyword]', function(event) {
       var keyword = $(event.currentTarget).data('keyword');
       cache.$input.val(keyword);
@@ -457,6 +525,14 @@
 
     cache.$resultsList.on('mouseenter', '.result-card', function(event) {
       highlightCard($(event.currentTarget).data('place-id'), false);
+    });
+
+    cache.$resultsList.on('click', '.result-card-toggle', function(event) {
+      var placeId = $(event.currentTarget).closest('.result-card').data('place-id');
+      var nextExpandedId = state.expandedPlaceId === placeId ? '' : placeId;
+
+      setExpandedPlace(nextExpandedId);
+      highlightCard(placeId, false);
     });
 
     cache.$resultsList.on('click', '.favorite-toggle', function(event) {
@@ -502,6 +578,7 @@
     cache.$sortFilter.val(state.sort);
     cache.$travelMode.val(state.travelMode);
     renderRecentSearches();
+    setResultsCollapsed(isMobileViewport());
 
     app.kakao.loadSdk()
       .done(function() {
