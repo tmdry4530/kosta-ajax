@@ -166,6 +166,11 @@
   function bindFavoritesPageEvents() {
     $('#favorites-list').on('click', '[data-action="remove"]', function(event) {
       var placeId = $(event.currentTarget).closest('[data-place-id]').data('place-id');
+
+      if (!window.confirm('이 즐겨찾기를 삭제할까요?')) {
+        return;
+      }
+
       favoritesModule.removeFavorite(placeId);
       app.ui.showBanner($('#favorites-status'), 'success', '즐겨찾기에서 삭제했어요.');
       renderFavoritesPage();

@@ -29,21 +29,20 @@
 }
 
 .hero-points {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  display: grid;
+  gap: 10px;
   margin-top: 16px;
 }
 
 .hero-point {
-  background: rgba(255, 255, 255, 0.76);
-  border: 1px solid rgba(45, 52, 54, 0.08);
-  border-radius: 999px;
-  color: var(--color-text-muted);
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(45, 52, 54, 0.12);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
   display: inline-flex;
-  font-size: 0.86rem;
-  font-weight: 600;
-  padding: 8px 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 12px 14px;
 }
 
 .weather-card {
@@ -227,6 +226,10 @@
     flex-direction: column;
   }
 
+  .hero-points {
+    grid-template-columns: 1fr;
+  }
+
   .button-hero {
     width: 100%;
   }
@@ -269,6 +272,10 @@
 @media (min-width: 768px) {
   .hero-grid {
     grid-template-columns: 1.1fr 0.9fr;
+  }
+
+  .hero-points {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .recommendation-grid {

@@ -6,9 +6,9 @@
   --color-surface: #ffffff;
   --color-surface-muted: rgba(255, 255, 255, 0.72);
   --color-text: #2d3436;
-  --color-text-muted: #636e72;
-  --color-border: rgba(45, 52, 54, 0.08);
-  --color-border-strong: rgba(45, 52, 54, 0.16);
+  --color-text-muted: #495057;
+  --color-border: rgba(45, 52, 54, 0.14);
+  --color-border-strong: rgba(45, 52, 54, 0.22);
   --color-rain: #74b9ff;
   --color-snow: #dfe6e9;
   --color-sunny: #ffeaa7;
@@ -157,6 +157,7 @@ body.theme-default {
 .page-description,
 .section-caption {
   color: var(--color-text-muted);
+  line-height: 1.6;
 }
 
 .panel {
@@ -206,8 +207,9 @@ body.theme-default {
 }
 
 .button-ghost {
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(45, 52, 54, 0.08);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(45, 52, 54, 0.16);
+  color: var(--color-text);
 }
 
 .button-danger {
@@ -303,9 +305,15 @@ body.theme-default {
 }
 
 .field-label {
-  color: var(--color-text-muted);
+  color: var(--color-text);
   font-size: 0.88rem;
-  font-weight: 500;
+  font-weight: 600;
+}
+
+.field-hint {
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+  line-height: 1.5;
 }
 
 .input-field,

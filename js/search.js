@@ -47,9 +47,20 @@
   function setResultsCollapsed(isCollapsed) {
     state.resultsCollapsed = Boolean(isCollapsed);
     cache.$resultsPanel.toggleClass('is-collapsed', state.resultsCollapsed);
+    cache.$resultsPanelBody.attr('aria-hidden', String(state.resultsCollapsed));
     cache.$resultsToggle
       .attr('aria-expanded', String(!state.resultsCollapsed))
       .text(state.resultsCollapsed ? '리스트 펼치기' : '리스트 접기');
+  }
+
+  function setActiveFilter(filter) {
+    state.filter = filter || 'all';
+    $('.filter-chip')
+      .removeClass('is-active')
+      .attr('aria-pressed', 'false')
+      .filter('[data-filter="' + state.filter + '"]')
+      .addClass('is-active')
+      .attr('aria-pressed', 'true');
   }
 
   function syncExpandedCardState() {
@@ -429,8 +440,7 @@
     $('#search-form').on('submit', function(event) {
       event.preventDefault();
       var keyword = $.trim(cache.$input.val()) || '맛집';
-      state.filter = 'all';
-      $('.filter-chip').removeClass('is-active').filter('[data-filter="all"]').addClass('is-active');
+      setActiveFilter('all');
       search(keyword, 1);
     });
 
@@ -469,9 +479,7 @@
     });
 
     $('.filter-group').on('click', '.filter-chip', function(event) {
-      state.filter = $(event.currentTarget).data('filter');
-      $('.filter-chip').removeClass('is-active');
-      $(event.currentTarget).addClass('is-active');
+      setActiveFilter($(event.currentTarget).data('filter'));
       filterPlaces();
       renderResults();
       syncAddressBar();
@@ -573,7 +581,7 @@
     state.demoMode = params.demo === '1';
 
     cache.$input.val(state.keyword);
-    $('.filter-chip').removeClass('is-active').filter('[data-filter="' + state.filter + '"]').addClass('is-active');
+    setActiveFilter(state.filter);
     cache.$distanceFilter.val(String(state.distanceLimit));
     cache.$sortFilter.val(state.sort);
     cache.$travelMode.val(state.travelMode);

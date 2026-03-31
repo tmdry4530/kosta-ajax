@@ -88,6 +88,11 @@
   font-weight: 700;
 }
 
+.filter-chip.is-active::before {
+  content: '✓';
+  margin-right: 6px;
+}
+
 .search-content-grid {
   display: grid;
   gap: 20px;
@@ -126,6 +131,10 @@
 .results-panel-body {
   display: grid;
   gap: 18px;
+  max-height: 2400px;
+  opacity: 1;
+  overflow: hidden;
+  transition: max-height 0.28s ease, opacity 0.2s ease;
 }
 
 .results-panel.is-collapsed {
@@ -133,7 +142,9 @@
 }
 
 .results-panel.is-collapsed .results-panel-body {
-  display: none;
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .map-canvas {
