@@ -166,6 +166,29 @@
     $('#map').removeClass('map-canvas-fallback').empty();
   }
 
+  function showManualPromptForLowAccuracy(coords) {
+    if (!app.utils.shouldPromptManualLocation(coords.accuracy)) {
+      app.ui.hideManualLocationForm(cache.$manualLocation);
+      return;
+    }
+
+    app.ui.showBanner(cache.$status, 'info', '현재 위치 정확도가 약 ' + app.utils.formatDistance(coords.accuracy) + '예요. 동네가 다르면 직접 수정해보세요.');
+    app.ui.renderManualLocationForm(cache.$manualLocation, {
+      title: '위치 오차가 커서 직접 보정할 수 있어요.',
+      description: '현재 좌표를 기준으로 검색했지만 오차가 클 수 있어요. 원하는 위치로 바로 수정할 수 있어요.',
+      lat: coords.lat,
+      lon: coords.lon,
+      submitText: '이 위치로 다시 검색',
+      onSubmit: function(nextCoords) {
+        state.lat = nextCoords.lat;
+        state.lon = nextCoords.lon;
+        state.accuracy = null;
+        app.kakao.setCenter(state.lat, state.lon);
+        search($.trim(cache.$input.val()) || state.keyword || '맛집', 1);
+      }
+    });
+  }
+
   function search(keyword, page) {
     state.keyword = keyword;
     state.page = page || 1;
@@ -229,11 +252,12 @@
           state.lon = coords.lon;
           state.accuracy = Number.isFinite(coords.accuracy) ? coords.accuracy : null;
           app.kakao.setCenter(state.lat, state.lon);
-          app.ui.hideManualLocationForm(cache.$manualLocation);
 
           if (coords.warning) {
             app.ui.showBanner(cache.$status, 'info', coords.warning + ' 그래도 현재 위치 기준으로 다시 검색해볼게요.');
           }
+
+          showManualPromptForLowAccuracy(coords);
 
           search($.trim(cache.$input.val()) || state.keyword || '맛집', 1);
         })

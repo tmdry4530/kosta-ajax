@@ -174,6 +174,27 @@
     }).promise();
   }
 
+  function showManualPromptForLowAccuracy(coords) {
+    if (!app.utils.shouldPromptManualLocation(coords.accuracy)) {
+      app.ui.hideManualLocationForm(cache.$manualPanel);
+      return;
+    }
+
+    app.ui.renderManualLocationForm(cache.$manualPanel, {
+      title: '위치 오차가 커서 직접 보정할 수 있어요.',
+      description: '현재 위치 정확도가 약 ' + app.utils.formatDistance(coords.accuracy) + '예요. 동네 추천이 다르면 위도/경도를 직접 수정해보세요.',
+      lat: coords.lat,
+      lon: coords.lon,
+      submitText: '이 위치로 다시 추천받기',
+      onSubmit: function(nextCoords) {
+        loadWeatherByCoords(nextCoords.lat, nextCoords.lon, '입력한 위치 기준으로 다시 불러오는 중이에요.', {
+          source: 'manual',
+          accuracy: null
+        });
+      }
+    });
+  }
+
   function loadWeatherByCoords(lat, lon, statusMessage, options) {
     var settings = $.extend({
       source: 'default'
@@ -223,6 +244,8 @@
           accuracy: coords.accuracy,
           locationWarning: coords.warning || ''
         });
+
+        showManualPromptForLowAccuracy(coords);
       })
       .fail(function(error) {
         app.ui.showBanner(cache.$status, 'info', error.message + ' 기본 위치로 먼저 보여드릴게요.');

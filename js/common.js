@@ -16,6 +16,7 @@
     searchRadius: 3000,
     geolocation: {
       desiredAccuracy: 300,
+      manualPromptThreshold: 1000,
       retryAccuracyThreshold: 1200,
       timeout: 12000,
       retryTimeout: 20000
@@ -48,6 +49,10 @@
       }
 
       return Math.round(distance) + 'm';
+    },
+
+    shouldPromptManualLocation: function(accuracy) {
+      return Number.isFinite(accuracy) && accuracy >= (app.constants.geolocation.manualPromptThreshold || 1000);
     },
 
     formatSavedDate: function(value) {
