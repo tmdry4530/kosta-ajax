@@ -517,10 +517,12 @@
     align-items: start;
     display: grid;
     gap: 16px;
-    grid-template-columns: minmax(220px, 1.1fr) minmax(180px, 0.9fr) minmax(140px, 176px) auto;
+    grid-template-columns: minmax(220px, 1fr) minmax(140px, 176px) auto;
   }
 
   .results-header > :first-child {
+    grid-column: 1 / 2;
+    grid-row: 1;
     min-width: 0;
   }
 
@@ -531,9 +533,23 @@
   }
 
   .results-meta {
+    grid-column: 1 / 2;
+    grid-row: 2;
     justify-items: start;
-    max-width: 220px;
-    padding-top: 8px;
+    max-width: none;
+    padding-top: 0;
+  }
+
+  .results-sort-group {
+    align-self: center;
+    grid-column: 2 / 3;
+    grid-row: 1 / span 2;
+  }
+
+  .results-toggle {
+    align-self: center;
+    grid-column: 3 / 4;
+    grid-row: 1 / span 2;
   }
 
   .map-panel {
