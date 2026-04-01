@@ -34,6 +34,11 @@
   gap: 6px;
 }
 
+.search-select-group-compact {
+  justify-self: end;
+  max-width: 176px;
+}
+
 .search-select-label {
   color: var(--color-text-muted);
   font-size: 0.84rem;
@@ -46,6 +51,12 @@
   border-radius: 14px;
   min-height: 44px;
   padding: 0 12px;
+}
+
+.search-select-group-compact .search-select {
+  border-radius: 12px;
+  min-height: 40px;
+  padding: 0 10px;
 }
 
 .recent-searches {
@@ -412,6 +423,11 @@
     grid-template-columns: 1fr;
   }
 
+  .search-select-group-compact {
+    justify-self: stretch;
+    max-width: none;
+  }
+
   .search-content-grid {
     display: flex;
     flex-direction: column;
@@ -470,7 +486,8 @@
   }
 
   .search-utility-bar {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: end;
+    grid-template-columns: minmax(0, 1fr) minmax(140px, 176px);
   }
 
   .search-content-grid {
