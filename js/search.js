@@ -9,7 +9,6 @@
     page: 1,
     filter: 'all',
     sort: 'distance',
-    travelMode: 'walk',
     places: [],
     visiblePlaces: [],
     meta: null,
@@ -30,7 +29,6 @@
     cache.$pagination = $('#pagination');
     cache.$mapSummary = $('#map-summary');
     cache.$sortFilter = $('#sort-filter');
-    cache.$travelMode = $('#travel-mode');
     cache.$recentSearches = $('#recent-searches');
     cache.$dataNote = $('#search-data-note');
     cache.$resultsPanel = $('.results-panel');
@@ -119,7 +117,7 @@
 
   function estimateTravelTime(distance) {
     var distanceNumber = Number(distance || 0);
-    var speed = state.travelMode === 'car' ? 400 : 70;
+    var speed = 70;
 
     if (!distanceNumber) {
       return '예상 시간 없음';
@@ -182,7 +180,6 @@
       page: state.page,
       filter: state.filter === 'all' ? '' : state.filter,
       sort: state.sort === 'distance' ? '' : state.sort,
-      travel: state.travelMode === 'walk' ? '' : state.travelMode,
       placeId: '',
       demo: state.demoMode ? '1' : ''
     });
@@ -255,7 +252,7 @@
         '        <div class="result-card-topline">',
         '          <span class="result-rank">No. ' + (index + 1) + '</span>',
         '          <span class="result-distance">' + app.utils.escapeHtml(place.distance ? place.distance + 'm' : '거리정보 없음') + '</span>',
-        place.distance ? '          <span class="result-distance result-distance-alt">' + app.utils.escapeHtml((state.travelMode === 'car' ? '차량 ' : '도보 ') + estimateTravelTime(place.distance)) + '</span>' : '',
+        place.distance ? '          <span class="result-distance result-distance-alt">' + app.utils.escapeHtml('도보 ' + estimateTravelTime(place.distance)) + '</span>' : '',
         '        </div>',
         '        <div class="result-card-title">' + app.utils.escapeHtml(place.placeName) + '</div>',
         '        <p class="result-card-subtitle">' + app.utils.escapeHtml(place.categoryName || '카테고리 정보 없음') + '</p>',
@@ -483,12 +480,6 @@
       syncAddressBar();
     });
 
-    cache.$travelMode.on('change', function() {
-      state.travelMode = $(this).val() || 'walk';
-      renderResults();
-      syncAddressBar();
-    });
-
     cache.$resultsToggle.on('click', function() {
       setResultsCollapsed(!state.resultsCollapsed);
     });
@@ -571,14 +562,12 @@
     state.page = Number(params.page || 1) || 1;
     state.filter = params.filter || 'all';
     state.sort = params.sort || 'distance';
-    state.travelMode = params.travel || 'walk';
     state.focusPlaceId = params.placeId || '';
     state.demoMode = params.demo === '1';
 
     cache.$input.val(state.keyword);
     setActiveFilter(state.filter);
     cache.$sortFilter.val(state.sort);
-    cache.$travelMode.val(state.travelMode);
     renderRecentSearches();
     setResultsCollapsed(isMobileViewport());
 

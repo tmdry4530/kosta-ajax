@@ -62,6 +62,7 @@
 .recent-searches {
   display: grid;
   gap: 8px;
+  order: 1;
 }
 
 .recent-search-list,
@@ -139,23 +140,27 @@
   white-space: nowrap;
 }
 
+.results-panel {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 116px);
+  min-height: 0;
+}
+
 .results-panel-body {
   display: grid;
+  flex: 1;
   gap: 18px;
-  max-height: 2400px;
+  grid-template-rows: minmax(0, 1fr) auto;
+  max-height: none;
+  min-height: 0;
   opacity: 1;
   overflow: hidden;
-  transition: max-height 0.28s ease, opacity 0.2s ease;
+  transition: opacity 0.2s ease;
 }
 
 .results-panel.is-collapsed {
   min-height: 0;
-}
-
-.results-panel.is-collapsed .results-panel-body {
-  max-height: 0;
-  opacity: 0;
-  pointer-events: none;
 }
 
 .map-canvas {
@@ -195,7 +200,9 @@
 .results-list {
   display: grid;
   gap: 14px;
-  min-height: 420px;
+  min-height: 0;
+  overflow: auto;
+  padding-right: 6px;
 }
 
 .result-card {
@@ -296,6 +303,23 @@
   gap: 14px;
 }
 
+.results-panel.is-collapsed .result-card {
+  gap: 0;
+  padding: 14px 16px;
+}
+
+.results-panel.is-collapsed .result-card-topline,
+.results-panel.is-collapsed .result-card-subtitle,
+.results-panel.is-collapsed .result-card-body,
+.results-panel.is-collapsed .pagination {
+  display: none;
+}
+
+.results-panel.is-collapsed .result-card-header {
+  align-items: center;
+  margin-bottom: 0;
+}
+
 .result-card-chips {
   display: flex;
   flex-wrap: wrap;
@@ -365,6 +389,7 @@
   font-family: 'Noto Sans KR', sans-serif;
   max-width: 240px;
   padding: 12px 14px;
+  word-break: keep-all;
 }
 
 .map-info-window strong {
@@ -374,9 +399,11 @@
 
 .map-info-window a {
   color: var(--color-primary-dark);
-  display: inline-block;
+  display: block;
   font-weight: 700;
   margin-top: 6px;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 @media (max-width: 767px) {
@@ -395,6 +422,10 @@
     gap: 12px;
     padding-bottom: 14px;
     position: static;
+  }
+
+  .recent-searches {
+    order: 0;
   }
 
   .search-form {
@@ -437,6 +468,7 @@
 
   .results-panel {
     min-height: 0;
+    max-height: none;
     order: 1;
   }
 
@@ -472,6 +504,12 @@
   .results-toggle {
     justify-self: stretch;
     width: 100%;
+  }
+
+  .results-panel.is-collapsed .results-panel-body {
+    max-height: 0;
+    opacity: 0;
+    pointer-events: none;
   }
 
   .result-card-actions .button,

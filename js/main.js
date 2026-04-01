@@ -62,27 +62,25 @@
     }).join('');
 
     var html = [
-      '<div class="weather-card-header">',
-      '  <div>',
-      '    <p class="section-kicker">' + app.utils.escapeHtml(sourceLabel) + '</p>',
-      '    <h2 id="weather-heading" class="section-title weather-location">📍 ' + app.utils.escapeHtml(primaryLocation) + '</h2>',
-      locationDetail ? '    <p class="weather-location-detail">' + app.utils.escapeHtml(locationDetail) + '</p>' : '',
-      '  </div>',
+      '<div class="weather-card-top">',
+      '  <p class="section-kicker">' + app.utils.escapeHtml(sourceLabel) + '</p>',
       '  <span class="result-badge">' + app.utils.escapeHtml(weather.weatherMain) + '</span>',
       '</div>',
       '<div class="weather-main">',
       '  <img class="weather-icon" src="https://openweathermap.org/img/wn/' + app.utils.escapeHtml(weather.icon) + '@2x.png" alt="' + app.utils.escapeHtml(weather.description) + '">',
-      '  <div>',
+      '  <div class="weather-main-primary">',
       '    <div class="weather-temp">' + app.utils.escapeHtml(app.utils.formatTemperature(weather.temp)) + '</div>',
       '    <p class="weather-description">' + app.utils.escapeHtml(weather.description) + '</p>',
       '  </div>',
-      '</div>',
-      '<div class="weather-location-meta">',
-      // '  <span class="result-badge">🧭 ' + app.utils.escapeHtml(sourceLabel) + '</span>',
-      // '  <span class="result-badge">📐 ' + app.utils.escapeHtml(Number(state.lat).toFixed(4) + ', ' + Number(state.lon).toFixed(4)) + '</span>',
-      accuracyLabel ? '  <span class="result-badge">🎯 정확도 ' + app.utils.escapeHtml(accuracyLabel) + '</span>' : '',
-      // '  <span class="result-badge">🗺 반경 ' + app.utils.escapeHtml(radiusLabel) + '</span>',
-      updatedLabel ? '  <span class="result-badge">⏱ ' + app.utils.escapeHtml(updatedLabel) + ' 기준</span>' : '',
+      '  <div class="weather-main-location">',
+      '    <h2 id="weather-heading" class="section-title weather-location">📍 ' + app.utils.escapeHtml(primaryLocation) + '</h2>',
+      locationDetail ? '    <p class="weather-location-detail">' + app.utils.escapeHtml(locationDetail) + '</p>' : '',
+      '    <div class="weather-location-meta">',
+      accuracyLabel ? '      <span class="result-badge">🎯 정확도 ' + app.utils.escapeHtml(accuracyLabel) + '</span>' : '',
+      '      <span class="result-badge">🗺 반경 ' + app.utils.escapeHtml(radiusLabel) + '</span>',
+      updatedLabel ? '      <span class="result-badge">⏱ ' + app.utils.escapeHtml(updatedLabel) + ' 기준</span>' : '',
+      '    </div>',
+      '  </div>',
       '</div>',
       '<div class="weather-meta">',
       '  <span class="result-badge">💧 습도 ' + app.utils.escapeHtml(weather.humidity) + '%</span>',
@@ -99,6 +97,39 @@
 
     app.ui.setTheme(weather.themeClass);
     cache.$weatherCard.html(html);
+  }
+
+  function renderWeatherCardSkeleton() {
+    cache.$weatherCard.html([
+      '<div class="weather-card-top">',
+      '  <div class="skeleton-block" style="height:18px;width:88px;"></div>',
+      '  <div class="skeleton-block" style="height:28px;width:92px;"></div>',
+      '</div>',
+      '<div class="weather-main weather-main-loading">',
+      '  <div class="skeleton-block" style="height:76px;width:76px;border-radius:24px;"></div>',
+      '  <div class="weather-main-primary">',
+      '    <div class="skeleton-block" style="height:54px;width:120px;"></div>',
+      '    <div class="skeleton-block" style="height:18px;width:96px;"></div>',
+      '  </div>',
+      '  <div class="weather-main-location">',
+      '    <div class="skeleton-block" style="height:28px;width:150px;"></div>',
+      '    <div class="skeleton-block" style="height:16px;width:120px;"></div>',
+      '    <div class="weather-location-meta">',
+      '      <div class="skeleton-block" style="height:32px;width:110px;"></div>',
+      '      <div class="skeleton-block" style="height:32px;width:90px;"></div>',
+      '    </div>',
+      '  </div>',
+      '</div>',
+      '<div class="weather-meta">',
+      '  <div class="skeleton-block" style="height:32px;width:96px;"></div>',
+      '  <div class="skeleton-block" style="height:32px;width:92px;"></div>',
+      '</div>',
+      '<div class="weather-summary">',
+      '  <div class="skeleton-block" style="height:20px;width:190px;margin-bottom:10px;"></div>',
+      '  <div class="skeleton-block" style="height:16px;width:100%;margin-bottom:8px;"></div>',
+      '  <div class="skeleton-block" style="height:16px;width:70%;"></div>',
+      '</div>'
+    ].join(''));
   }
 
   function renderForecast(forecastItems) {
@@ -222,7 +253,7 @@
     syncNearbySearchLinks();
 
     app.ui.showBanner(cache.$status, 'info', statusMessage || '날씨와 추천 메뉴를 불러오는 중이에요.');
-    cache.$weatherCard.html('<div class="skeleton-block skeleton-block-lg"></div>');
+    renderWeatherCardSkeleton();
     cache.$forecast.html('<div class="skeleton-block" style="height: 120px;"></div>');
     cache.$recommendations.html('<div class="skeleton-block" style="height: 220px;"></div>');
 

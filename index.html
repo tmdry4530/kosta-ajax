@@ -40,16 +40,52 @@
                 <button id="hero-refresh-button" class="button button-ghost button-hero" type="button">지금 위치 다시 불러오기</button>
               </div>
               <div class="hero-points" aria-label="서비스 특징">
-                <span class="hero-point">📍 위치 기반 추천</span>
-                <span class="hero-point">🌦️ 날씨 맞춤 메뉴</span>
-                <span class="hero-point">⭐ 즐겨찾기 저장</span>
+                <span class="hero-point">
+                  <span class="hero-point-title">📍 위치 기반 추천</span>
+                  <span class="hero-point-description">현재 위치와 가까운 맛집을 바로 찾을 수 있어요.</span>
+                </span>
+                <span class="hero-point">
+                  <span class="hero-point-title">🌦️ 날씨 맞춤 메뉴</span>
+                  <span class="hero-point-description">오늘 날씨에 어울리는 메뉴를 먼저 추천해드려요.</span>
+                </span>
+                <span class="hero-point">
+                  <span class="hero-point-title">⭐ 즐겨찾기 저장</span>
+                  <span class="hero-point-description">마음에 드는 식당을 저장해두고 다시 볼 수 있어요.</span>
+                </span>
               </div>
             </div>
             <div id="manual-location-panel" class="manual-location-panel"></div>
           </div>
 
           <section id="weather-card" class="panel weather-card" aria-labelledby="weather-heading">
-            <div class="skeleton-block skeleton-block-lg"></div>
+            <div class="weather-card-top">
+              <div class="skeleton-block" style="height:18px;width:88px;"></div>
+              <div class="skeleton-block" style="height:28px;width:92px;"></div>
+            </div>
+            <div class="weather-main weather-main-loading">
+              <div class="skeleton-block" style="height:76px;width:76px;border-radius:24px;"></div>
+              <div class="weather-main-primary">
+                <div class="skeleton-block" style="height:54px;width:120px;"></div>
+                <div class="skeleton-block" style="height:18px;width:96px;"></div>
+              </div>
+              <div class="weather-main-location">
+                <div class="skeleton-block" style="height:28px;width:150px;"></div>
+                <div class="skeleton-block" style="height:16px;width:120px;"></div>
+                <div class="weather-location-meta">
+                  <div class="skeleton-block" style="height:32px;width:110px;"></div>
+                  <div class="skeleton-block" style="height:32px;width:90px;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="weather-meta">
+              <div class="skeleton-block" style="height:32px;width:96px;"></div>
+              <div class="skeleton-block" style="height:32px;width:92px;"></div>
+            </div>
+            <div class="weather-summary">
+              <div class="skeleton-block" style="height:20px;width:190px;margin-bottom:10px;"></div>
+              <div class="skeleton-block" style="height:16px;width:100%;margin-bottom:8px;"></div>
+              <div class="skeleton-block" style="height:16px;width:70%;"></div>
+            </div>
           </section>
         </div>
       </section>

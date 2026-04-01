@@ -1,8 +1,9 @@
 .hero-section {
-  padding: 36px 0 16px;
+  padding: 24px 0 12px;
 }
 
 .hero-grid {
+  align-items: stretch;
   display: grid;
   gap: 20px;
 }
@@ -11,6 +12,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  height: 100%;
 }
 
 .hero-copy {
@@ -21,7 +23,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-top: 22px;
+  margin-top: 18px;
 }
 
 .button-hero {
@@ -31,7 +33,7 @@
 .hero-points {
   display: grid;
   gap: 10px;
-  margin-top: 16px;
+  margin-top: 14px;
 }
 
 .hero-point {
@@ -39,18 +41,31 @@
   border: 1px solid rgba(45, 52, 54, 0.12);
   border-radius: var(--radius-sm);
   color: var(--color-text);
-  display: inline-flex;
-  font-size: 0.9rem;
+  display: grid;
+  gap: 6px;
+  padding: 14px;
+}
+
+.hero-point-title {
+  font-size: 0.92rem;
   font-weight: 700;
-  padding: 12px 14px;
+}
+
+.hero-point-description {
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+  line-height: 1.5;
 }
 
 .weather-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   min-height: 240px;
 }
 
-.weather-card-header {
-  align-items: flex-start;
+.weather-card-top {
+  align-items: center;
   display: flex;
   justify-content: space-between;
   gap: 16px;
@@ -71,14 +86,25 @@
   align-items: center;
   display: flex;
   gap: 16px;
-  margin-top: 20px;
+  margin-top: 18px;
+}
+
+.weather-main-primary {
+  display: grid;
+  gap: 6px;
+}
+
+.weather-main-location {
+  display: grid;
+  gap: 8px;
+  margin-left: auto;
+  min-width: 0;
 }
 
 .weather-location-meta {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-top: 18px;
 }
 
 .weather-icon {
@@ -108,7 +134,7 @@
 .weather-summary {
   background: rgba(255, 255, 255, 0.75);
   border-radius: var(--radius-md);
-  margin-top: 20px;
+  margin-top: auto;
   padding: 18px;
 }
 
@@ -207,7 +233,7 @@
 
 @media (max-width: 767px) {
   .hero-section {
-    padding-top: 20px;
+    padding-top: 16px;
   }
 
   .hero-grid {
@@ -240,6 +266,12 @@
 
   .weather-main {
     align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .weather-main-location {
+    margin-left: 0;
+    width: 100%;
   }
 
   .weather-location-meta {
@@ -252,6 +284,7 @@
   }
 
   .weather-summary {
+    margin-top: 18px;
     padding: 16px;
   }
 
