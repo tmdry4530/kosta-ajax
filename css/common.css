@@ -91,7 +91,17 @@ body.theme-default {
 }
 
 .brand-mark {
-  font-size: 1.6rem;
+  align-items: center;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  border-radius: 999px;
+  color: #ffffff;
+  display: inline-flex;
+  font-size: 0.78rem;
+  font-weight: 700;
+  height: 34px;
+  justify-content: center;
+  letter-spacing: 0.04em;
+  width: 34px;
 }
 
 .header-nav {

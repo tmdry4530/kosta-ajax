@@ -10,7 +10,7 @@
 .search-controls-panel {
   background: #fffaf6;
   display: grid;
-  gap: 16px;
+  gap: 14px;
 }
 
 .search-form {
@@ -27,6 +27,7 @@
 .search-utility-bar {
   display: grid;
   gap: 12px;
+  justify-content: end;
 }
 
 .search-select-group {
@@ -62,7 +63,6 @@
 .recent-searches {
   display: grid;
   gap: 8px;
-  order: 1;
 }
 
 .recent-search-list,
@@ -433,6 +433,7 @@
 
   .search-utility-bar {
     grid-template-columns: 1fr;
+    justify-content: stretch;
   }
 
   .search-select-group-compact {
@@ -505,8 +506,7 @@
   }
 
   .search-utility-bar {
-    align-items: end;
-    grid-template-columns: minmax(0, 1fr) minmax(140px, 176px);
+    grid-template-columns: minmax(140px, 176px);
   }
 
   .search-content-grid {

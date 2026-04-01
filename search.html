@@ -18,7 +18,7 @@
     <header class="site-header">
       <div class="container header-inner">
         <a class="brand" href="index.html" aria-label="WeatherEats 홈">
-          <span class="brand-mark">🍽️</span>
+          <span class="brand-mark" aria-hidden="true">WE</span>
           <span class="brand-text">WeatherEats</span>
         </a>
         <nav class="header-nav" aria-label="주요 메뉴">
@@ -40,7 +40,6 @@
             <button id="nearby-button" class="button button-secondary" type="button">내 주변 3km</button>
           </form>
           <div id="recent-searches" class="recent-searches" aria-live="polite"></div>
-          <div id="manual-search-location" class="manual-location-panel"></div>
           <div class="filter-group" aria-label="카테고리 필터">
             <button class="filter-chip is-active" type="button" data-filter="all">전체</button>
             <button class="filter-chip" type="button" data-filter="한식">한식</button>
@@ -58,14 +57,8 @@
                 <option value="category">카테고리순</option>
               </select>
             </label>
-            <label class="search-select-group" for="travel-mode">
-              <span class="search-select-label">이동</span>
-              <select id="travel-mode" class="search-select">
-                <option value="walk">도보</option>
-                <option value="car">차량</option>
-              </select>
-            </label>
           </div>
+          <div id="manual-search-location" class="manual-location-panel"></div>
         </section>
 
         <section class="search-content-grid">
