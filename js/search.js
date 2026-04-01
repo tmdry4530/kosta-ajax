@@ -9,7 +9,6 @@
     page: 1,
     filter: 'all',
     sort: 'distance',
-    distanceLimit: app.constants.searchRadius,
     travelMode: 'walk',
     places: [],
     visiblePlaces: [],
@@ -30,7 +29,6 @@
     cache.$resultsList = $('#results-list');
     cache.$pagination = $('#pagination');
     cache.$mapSummary = $('#map-summary');
-    cache.$distanceFilter = $('#distance-filter');
     cache.$sortFilter = $('#sort-filter');
     cache.$travelMode = $('#travel-mode');
     cache.$recentSearches = $('#recent-searches');
@@ -99,12 +97,6 @@
 
   function filterPlaces() {
     state.visiblePlaces = state.places.filter(function(place) {
-      var distanceNumber = Number(place.distance || 0);
-
-      if (place.distance && state.distanceLimit && distanceNumber > state.distanceLimit) {
-        return false;
-      }
-
       if (state.filter === 'all') {
         return true;
       }
@@ -189,7 +181,6 @@
       lon: state.lon,
       page: state.page,
       filter: state.filter === 'all' ? '' : state.filter,
-      distance: state.distanceLimit === app.constants.searchRadius ? '' : state.distanceLimit,
       sort: state.sort === 'distance' ? '' : state.sort,
       travel: state.travelMode === 'walk' ? '' : state.travelMode,
       placeId: '',
@@ -411,7 +402,7 @@
         renderResults();
         renderPagination();
         renderDataNote();
-        cache.$mapSummary.text('“' + state.keyword + '” 키워드로 내 주변 ' + app.utils.formatDistance(state.distanceLimit) + '를 검색했어요.');
+        cache.$mapSummary.text('“' + state.keyword + '” 키워드로 내 주변 ' + app.utils.formatDistance(app.constants.searchRadius) + '를 검색했어요.');
         syncAddressBar();
         if (state.meta && state.meta.fallback) {
           if (state.meta.fallback_reason === 'manual-demo') {
@@ -485,14 +476,6 @@
       syncAddressBar();
     });
 
-    cache.$distanceFilter.on('change', function() {
-      state.distanceLimit = Number($(this).val()) || app.constants.searchRadius;
-      filterPlaces();
-      renderResults();
-      renderPagination();
-      syncAddressBar();
-    });
-
     cache.$sortFilter.on('change', function() {
       state.sort = $(this).val() || 'distance';
       filterPlaces();
@@ -535,7 +518,20 @@
       highlightCard($(event.currentTarget).data('place-id'), false);
     });
 
+    cache.$resultsList.on('click', '.result-card', function(event) {
+      if ($(event.target).closest('.favorite-toggle, a, .button').length) {
+        return;
+      }
+
+      var placeId = $(event.currentTarget).data('place-id');
+      var nextExpandedId = state.expandedPlaceId === placeId ? '' : placeId;
+
+      setExpandedPlace(nextExpandedId);
+      highlightCard(placeId, false);
+    });
+
     cache.$resultsList.on('click', '.result-card-toggle', function(event) {
+      event.stopPropagation();
       var placeId = $(event.currentTarget).closest('.result-card').data('place-id');
       var nextExpandedId = state.expandedPlaceId === placeId ? '' : placeId;
 
@@ -575,14 +571,12 @@
     state.page = Number(params.page || 1) || 1;
     state.filter = params.filter || 'all';
     state.sort = params.sort || 'distance';
-    state.distanceLimit = Number(params.distance || app.constants.searchRadius) || app.constants.searchRadius;
     state.travelMode = params.travel || 'walk';
     state.focusPlaceId = params.placeId || '';
     state.demoMode = params.demo === '1';
 
     cache.$input.val(state.keyword);
     setActiveFilter(state.filter);
-    cache.$distanceFilter.val(String(state.distanceLimit));
     cache.$sortFilter.val(state.sort);
     cache.$travelMode.val(state.travelMode);
     renderRecentSearches();
