@@ -48,7 +48,7 @@
 
     var locationDetail = '';
 
-    if (weather.locationName && weather.locationName !== primaryLocation) {
+    if (!state.locationDetails && weather.locationName && weather.locationName !== primaryLocation) {
       locationDetail = '날씨 기준 도시: ' + weather.locationName;
     }
 
