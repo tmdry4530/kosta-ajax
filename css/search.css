@@ -10,7 +10,7 @@
 .search-controls-panel {
   background: #fffaf6;
   display: grid;
-  gap: 14px;
+  gap: 12px;
 }
 
 .search-form {
@@ -21,7 +21,7 @@
 .filter-group {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
 }
 
 .search-select-group {
@@ -55,8 +55,10 @@
 }
 
 .recent-searches {
-  display: grid;
-  gap: 8px;
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .recent-search-list,
@@ -71,8 +73,8 @@
   border: 1px solid rgba(255, 107, 53, 0.18);
   border-radius: 999px;
   color: var(--color-primary-dark);
-  min-height: 40px;
-  padding: 0 14px;
+  min-height: 36px;
+  padding: 0 12px;
 }
 
 .filter-chip {
@@ -136,6 +138,7 @@
 
 .results-sort-group {
   justify-self: end;
+  margin-right: 10px;
 }
 
 .results-panel {
@@ -404,6 +407,8 @@
   }
 
   .recent-searches {
+    align-items: flex-start;
+    gap: 8px;
     order: 0;
   }
 
@@ -483,6 +488,7 @@
 
   .results-sort-group {
     justify-self: stretch;
+    margin-right: 0;
   }
 
   .results-panel.is-collapsed .results-panel-body {
