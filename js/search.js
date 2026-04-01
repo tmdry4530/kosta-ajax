@@ -15,8 +15,7 @@
     focusPlaceId: '',
     accuracy: null,
     demoMode: false,
-    resultsCollapsed: false,
-    expandedPlaceId: ''
+    resultsCollapsed: false
   };
   var cache = {};
 
@@ -57,23 +56,6 @@
       .filter('[data-filter="' + state.filter + '"]')
       .addClass('is-active')
       .attr('aria-pressed', 'true');
-  }
-
-  function syncExpandedCardState() {
-    cache.$resultsList.find('.result-card').each(function(_, element) {
-      var $card = $(element);
-      var isExpanded = $card.data('place-id') === state.expandedPlaceId;
-
-      $card.toggleClass('is-expanded', isExpanded);
-      $card.find('.result-card-toggle').attr('aria-expanded', String(isExpanded));
-      $card.find('.result-card-body').prop('hidden', !isExpanded);
-      $card.find('.result-card-toggle-text').text(isExpanded ? '접기' : '펼치기');
-    });
-  }
-
-  function setExpandedPlace(placeId) {
-    state.expandedPlaceId = placeId || '';
-    syncExpandedCardState();
   }
 
   function normalizePlace(doc) {
@@ -212,7 +194,6 @@
     cache.$resultsList.empty();
 
     if (!state.visiblePlaces.length) {
-      state.expandedPlaceId = '';
       var suggestions = buildSuggestionKeywords();
       var suggestionsHtml = suggestions.length
         ? '<div class="empty-suggestion-list">' + suggestions.map(function(keyword) {
@@ -226,27 +207,11 @@
       return;
     }
 
-    if (state.expandedPlaceId) {
-      var hasExpandedPlace = state.visiblePlaces.some(function(place) {
-        return place.id === state.expandedPlaceId;
-      });
-
-      if (!hasExpandedPlace) {
-        state.expandedPlaceId = '';
-      }
-    }
-
-    if (!state.expandedPlaceId && !isMobileViewport()) {
-      state.expandedPlaceId = state.visiblePlaces[0].id;
-    }
-
     var html = state.visiblePlaces.map(function(place, index) {
       var favoriteLabel = app.favorites.renderFavoriteButtonLabel(place.id);
-      var isExpanded = place.id === state.expandedPlaceId;
 
       return [
-        '<article class="result-card ' + (isExpanded ? 'is-expanded' : '') + '" data-place-id="' + app.utils.escapeHtml(place.id) + '">',
-        '  <button class="result-card-toggle" type="button" aria-expanded="' + String(isExpanded) + '">',
+        '<article class="result-card" data-place-id="' + app.utils.escapeHtml(place.id) + '">',
         '    <div class="result-card-header">',
         '      <div class="result-card-primary">',
         '        <div class="result-card-topline">',
@@ -257,10 +222,8 @@
         '        <div class="result-card-title">' + app.utils.escapeHtml(place.placeName) + '</div>',
         '        <p class="result-card-subtitle">' + app.utils.escapeHtml(place.categoryName || '카테고리 정보 없음') + '</p>',
         '      </div>',
-        '      <span class="result-card-toggle-text">' + (isExpanded ? '접기' : '펼치기') + '</span>',
         '    </div>',
-        '  </button>',
-        '  <div class="result-card-body" ' + (isExpanded ? '' : 'hidden') + '>',
+        '  <div class="result-card-body">',
         '    <div class="result-card-chips">',
         '      <span class="result-chip">' + app.utils.escapeHtml(place.categoryLabel) + '</span>',
         '      <span class="result-chip result-chip-location">내 주변 3km</span>',
@@ -279,7 +242,6 @@
     }).join('');
 
     cache.$resultsList.html(html);
-    syncExpandedCardState();
     cache.$resultsCount.text('총 ' + state.places.length + '개 중 ' + state.visiblePlaces.length + '개를 표시하고 있어요.');
 
     app.kakao.renderMarkers(state.visiblePlaces, {
@@ -324,10 +286,6 @@
   function highlightCard(placeId, shouldScroll) {
     if (shouldScroll && state.resultsCollapsed) {
       setResultsCollapsed(false);
-    }
-
-    if (shouldScroll) {
-      setExpandedPlace(placeId);
     }
 
     cache.$resultsList.find('.result-card').removeClass('is-highlighted');
@@ -507,27 +465,6 @@
 
     cache.$resultsList.on('mouseenter', '.result-card', function(event) {
       highlightCard($(event.currentTarget).data('place-id'), false);
-    });
-
-    cache.$resultsList.on('click', '.result-card', function(event) {
-      if ($(event.target).closest('.favorite-toggle, a, .button').length) {
-        return;
-      }
-
-      var placeId = $(event.currentTarget).data('place-id');
-      var nextExpandedId = state.expandedPlaceId === placeId ? '' : placeId;
-
-      setExpandedPlace(nextExpandedId);
-      highlightCard(placeId, false);
-    });
-
-    cache.$resultsList.on('click', '.result-card-toggle', function(event) {
-      event.stopPropagation();
-      var placeId = $(event.currentTarget).closest('.result-card').data('place-id');
-      var nextExpandedId = state.expandedPlaceId === placeId ? '' : placeId;
-
-      setExpandedPlace(nextExpandedId);
-      highlightCard(placeId, false);
     });
 
     cache.$resultsList.on('click', '.favorite-toggle', function(event) {
