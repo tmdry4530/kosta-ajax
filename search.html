@@ -48,16 +48,6 @@
             <button class="filter-chip" type="button" data-filter="양식">양식</button>
             <button class="filter-chip" type="button" data-filter="카페">카페</button>
           </div>
-          <div class="search-utility-bar" aria-label="검색 보조 옵션">
-            <label class="search-select-group search-select-group-compact" for="sort-filter">
-              <span class="search-select-label">정렬</span>
-              <select id="sort-filter" class="search-select">
-                <option value="distance">거리순</option>
-                <option value="name">이름순</option>
-                <option value="category">카테고리순</option>
-              </select>
-            </label>
-          </div>
           <div id="manual-search-location" class="manual-location-panel"></div>
         </section>
 
@@ -83,6 +73,14 @@
                 <p id="results-count" class="results-count">검색 결과를 불러오는 중입니다.</p>
                 <p id="search-data-note" class="section-caption">Kakao Local API 기준 · 검색 전</p>
               </div>
+              <label class="search-select-group search-select-group-compact results-sort-group" for="sort-filter">
+                <span class="search-select-label">정렬</span>
+                <select id="sort-filter" class="search-select">
+                  <option value="distance">거리순</option>
+                  <option value="name">이름순</option>
+                  <option value="category">카테고리순</option>
+                </select>
+              </label>
               <button id="results-toggle" class="button button-ghost results-toggle" type="button" aria-expanded="true"
                 aria-controls="results-panel-body">
                 리스트 접기
