@@ -115,8 +115,7 @@
   align-self: start;
 }
 
-.map-panel-header,
-.results-header {
+.map-panel-header {
   align-items: flex-start;
   display: flex;
   gap: 14px;
@@ -124,21 +123,45 @@
   margin-bottom: 18px;
 }
 
+.results-header {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.results-header-top,
+.results-header-bottom {
+  display: flex;
+  gap: 14px;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.results-header-bottom {
+  align-items: flex-end;
+}
+
+.results-title-group {
+  min-width: 0;
+  flex: 1;
+}
+
 .results-meta {
   display: grid;
   gap: 4px;
-  justify-items: end;
+  min-width: 0;
+  flex: 1;
 }
 
 .results-toggle {
-  justify-self: end;
+  flex-shrink: 0;
   min-height: 40px;
   white-space: nowrap;
 }
 
 .results-sort-group {
-  justify-self: end;
-  margin-right: 10px;
+  flex-shrink: 0;
 }
 
 .results-panel {
@@ -471,10 +494,19 @@
   }
 
   .result-card-header,
-  .map-panel-header,
-  .results-header {
+  .map-panel-header {
     gap: 10px;
     flex-direction: column;
+  }
+
+  .results-header-top,
+  .results-header-bottom {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .results-meta {
+    justify-items: start;
   }
 
   .results-meta {
@@ -482,13 +514,12 @@
   }
 
   .results-toggle {
-    justify-self: stretch;
     width: 100%;
   }
 
   .results-sort-group {
-    justify-self: stretch;
-    margin-right: 0;
+    width: 100%;
+    max-width: none;
   }
 
   .results-panel.is-collapsed .results-panel-body {
@@ -514,43 +545,21 @@
   }
 
   .results-header {
-    display: grid;
-    gap: 6px 16px;
-    grid-template-columns: 1fr auto;
-    grid-template-rows: auto auto;
-    align-items: end;
-  }
-
-  .results-header > :first-child {
-    grid-column: 1 / 2;
-    grid-row: 1;
-    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 22px;
   }
 
   .results-header .section-title {
     font-size: clamp(1.35rem, 2vw, 2.2rem);
     line-height: 1.15;
     word-break: keep-all;
+    overflow-wrap: break-word;
   }
 
-  .results-toggle {
-    grid-column: 2 / 3;
-    grid-row: 1;
-    align-self: end;
-  }
-
-  .results-meta {
-    grid-column: 1 / 2;
-    grid-row: 2;
-    justify-items: start;
-    max-width: none;
-    padding-top: 2px;
-  }
-
-  .results-sort-group {
-    grid-column: 2 / 3;
-    grid-row: 2;
-    align-self: center;
+  .results-header-bottom {
+    align-items: center;
   }
 
   .map-panel {

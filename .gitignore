@@ -1,2 +1,21 @@
+# Environment / IDE
+.vscode/
+.idea/
+*.swp
+*.orig
+
+# OS Files
+.DS_Store
+Thumbs.db
+.Spotlight-V100
+.Trashes
+
+# Project Config
 js/config.js
 .omx/
+
+# Build & Logs
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

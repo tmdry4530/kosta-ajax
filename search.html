@@ -65,26 +65,30 @@
 
           <div class="panel results-panel">
             <div class="results-header">
-              <div>
-                <p class="section-kicker">검색 결과</p>
-                <h2 class="section-title">주변 맛집 리스트</h2>
+              <div class="results-header-top">
+                <div class="results-title-group">
+                  <p class="section-kicker">검색 결과</p>
+                  <h2 class="section-title">주변 맛집 리스트</h2>
+                </div>
+                <button id="results-toggle" class="button button-ghost results-toggle" type="button" aria-expanded="true"
+                  aria-controls="results-panel-body">
+                  리스트 접기
+                </button>
               </div>
-              <div class="results-meta">
-                <p id="results-count" class="results-count">검색 결과를 불러오는 중입니다.</p>
-                <p id="search-data-note" class="section-caption">Kakao Local API 기준 · 검색 전</p>
+              <div class="results-header-bottom">
+                <div class="results-meta">
+                  <p id="results-count" class="results-count">검색 결과를 불러오는 중입니다.</p>
+                  <p id="search-data-note" class="section-caption">Kakao Local API 기준 · 검색 전</p>
+                </div>
+                <label class="search-select-group search-select-group-compact results-sort-group" for="sort-filter">
+                  <span class="search-select-label">정렬</span>
+                  <select id="sort-filter" class="search-select">
+                    <option value="distance">거리순</option>
+                    <option value="name">이름순</option>
+                    <option value="category">카테고리순</option>
+                  </select>
+                </label>
               </div>
-              <label class="search-select-group search-select-group-compact results-sort-group" for="sort-filter">
-                <span class="search-select-label">정렬</span>
-                <select id="sort-filter" class="search-select">
-                  <option value="distance">거리순</option>
-                  <option value="name">이름순</option>
-                  <option value="category">카테고리순</option>
-                </select>
-              </label>
-              <button id="results-toggle" class="button button-ghost results-toggle" type="button" aria-expanded="true"
-                aria-controls="results-panel-body">
-                리스트 접기
-              </button>
             </div>
             <div id="results-panel-body" class="results-panel-body">
               <div id="results-list" class="results-list" aria-live="polite"></div>

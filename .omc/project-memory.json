@@ -1,0 +1,112 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1775035167215,
+  "projectRoot": "/Users/chamdom/Develop/kosta/ajax",
+  "techStack": {
+    "languages": [],
+    "frameworks": [],
+    "packageManager": "npm",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [],
+    "gitBranches": null
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "css": {
+      "path": "css",
+      "purpose": null,
+      "fileCount": 5,
+      "lastAccessed": 1775035167183,
+      "keyFiles": [
+        "common.css",
+        "favorites.css",
+        "main.css",
+        "reset.css",
+        "search.css"
+      ]
+    },
+    "dogfood-output": {
+      "path": "dogfood-output",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1775035167194,
+      "keyFiles": []
+    },
+    "img": {
+      "path": "img",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1775035167195,
+      "keyFiles": []
+    },
+    "js": {
+      "path": "js",
+      "purpose": null,
+      "fileCount": 7,
+      "lastAccessed": 1775035167196,
+      "keyFiles": [
+        "common.js",
+        "config.js",
+        "favorites.js",
+        "kakao.js",
+        "main.js"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "css/search.css",
+      "accessCount": 6,
+      "lastAccessed": 1775035281153,
+      "type": "file"
+    },
+    {
+      "path": "search.html",
+      "accessCount": 4,
+      "lastAccessed": 1775035399727,
+      "type": "file"
+    },
+    {
+      "path": "js/search.js",
+      "accessCount": 2,
+      "lastAccessed": 1775035229420,
+      "type": "file"
+    },
+    {
+      "path": "css/common.css",
+      "accessCount": 2,
+      "lastAccessed": 1775035255439,
+      "type": "file"
+    },
+    {
+      "path": ".tmp-pc-check-fixed.png",
+      "accessCount": 2,
+      "lastAccessed": 1775035434140,
+      "type": "file"
+    },
+    {
+      "path": ".tmp-pc-check.png",
+      "accessCount": 1,
+      "lastAccessed": 1775035342979,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}
