@@ -507,6 +507,29 @@
     grid-template-columns: minmax(0, 1.08fr) minmax(340px, 0.92fr);
   }
 
+  .results-header {
+    align-items: start;
+    display: grid;
+    gap: 16px;
+    grid-template-columns: minmax(220px, 1.1fr) minmax(180px, 0.9fr) minmax(140px, 176px) auto;
+  }
+
+  .results-header > :first-child {
+    min-width: 0;
+  }
+
+  .results-header .section-title {
+    font-size: clamp(1.35rem, 2vw, 2.2rem);
+    line-height: 1.15;
+    word-break: keep-all;
+  }
+
+  .results-meta {
+    justify-items: start;
+    max-width: 220px;
+    padding-top: 8px;
+  }
+
   .map-panel {
     display: flex;
     flex-direction: column;
