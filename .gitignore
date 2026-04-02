@@ -19,3 +19,6 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+js-logic.md
+발표스크립트.md

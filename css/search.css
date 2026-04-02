@@ -229,6 +229,7 @@
 }
 
 .results-list {
+  align-content: start;
   display: grid;
   gap: 14px;
   min-height: 0;
@@ -401,8 +402,17 @@
   color: var(--color-text);
   font-family: 'Noto Sans KR', sans-serif;
   max-width: 240px;
+  min-width: 180px;
   padding: 12px 14px;
+  white-space: normal;
   word-break: keep-all;
+}
+
+.map-canvas .wrap_cont,
+.map-canvas .wrap_body,
+.map-canvas .tooltip_area,
+.map-canvas [class*="infowindow"] {
+  overflow: visible !important;
 }
 
 .map-info-window strong {
