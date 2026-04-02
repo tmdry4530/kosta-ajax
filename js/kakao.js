@@ -9,7 +9,7 @@
     map: null,
     markers: {},
     places: {},
-    infoWindow: null,
+    overlay: null,
     activeMarkerId: null,
     anchorMarker: null,
     anchorMarkerImage: null
@@ -44,9 +44,7 @@
     mapState.places = {};
     mapState.activeMarkerId = null;
 
-    if (mapState.infoWindow) {
-      mapState.infoWindow.close();
-    }
+    closeOverlay();
   }
 
   function syncAnchorMarker(lat, lon) {
@@ -72,15 +70,22 @@
     mapState.anchorMarker.setZIndex(20);
   }
 
-  function buildInfoContent(place) {
+  function buildOverlayContent(place) {
     return [
       '<div class="map-info-window">',
       '  <strong>' + app.utils.escapeHtml(place.placeName) + '</strong>',
       '  <div>' + app.utils.escapeHtml(place.addressName || '주소 정보 없음') + '</div>',
       '  <div>' + app.utils.escapeHtml(place.phone || '전화번호 없음') + '</div>',
       '  <a href="' + app.utils.escapeHtml(place.placeUrl) + '" target="_blank" rel="noreferrer">카카오맵에서 보기</a>',
+      '  <button class="map-info-close" type="button" aria-label="닫기">✕</button>',
       '</div>'
     ].join('');
+  }
+
+  function closeOverlay() {
+    if (mapState.overlay) {
+      mapState.overlay.setMap(null);
+    }
   }
 
   function activateMarker(placeId) {
@@ -418,7 +423,6 @@
       center: center,
       level: 5
     });
-    mapState.infoWindow = new window.kakao.maps.InfoWindow({ removable: true });
     syncAnchorMarker(lat, lon);
 
     return mapState.map;
@@ -463,12 +467,27 @@
   };
 
   mapModule.openInfoWindow = function(placeId) {
-    if (!mapState.infoWindow || !mapState.markers[placeId] || !mapState.places[placeId]) {
+    if (!mapState.map || !mapState.markers[placeId] || !mapState.places[placeId]) {
       return;
     }
 
-    mapState.infoWindow.setContent(buildInfoContent(mapState.places[placeId]));
-    mapState.infoWindow.open(mapState.map, mapState.markers[placeId]);
+    closeOverlay();
+
+    var place = mapState.places[placeId];
+    var marker = mapState.markers[placeId];
+    var content = buildOverlayContent(place);
+
+    mapState.overlay = new window.kakao.maps.CustomOverlay({
+      content: content,
+      map: mapState.map,
+      position: marker.getPosition(),
+      yAnchor: 1.35,
+      xAnchor: 0.5
+    });
+
+    $(mapState.overlay.getContent()).on('click', '.map-info-close', function() {
+      closeOverlay();
+    });
   };
 
   mapModule.focusMarker = function(placeId) {

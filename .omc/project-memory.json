@@ -79,8 +79,14 @@
     },
     {
       "path": "css/search.css",
+      "accessCount": 11,
+      "lastAccessed": 1775168188397,
+      "type": "file"
+    },
+    {
+      "path": "js/kakao.js",
       "accessCount": 10,
-      "lastAccessed": 1775168087616,
+      "lastAccessed": 1775168175673,
       "type": "file"
     },
     {
@@ -99,12 +105,6 @@
       "path": "js/search.js",
       "accessCount": 4,
       "lastAccessed": 1775164809827,
-      "type": "file"
-    },
-    {
-      "path": "js/kakao.js",
-      "accessCount": 3,
-      "lastAccessed": 1775165448601,
       "type": "file"
     },
     {
