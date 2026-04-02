@@ -408,11 +408,13 @@
   word-break: keep-all;
 }
 
-.map-canvas .wrap_cont,
-.map-canvas .wrap_body,
-.map-canvas .tooltip_area,
-.map-canvas [class*="infowindow"] {
+.map-canvas div[style*="overflow"] {
   overflow: visible !important;
+}
+
+.map-canvas .map-info-window {
+  box-sizing: border-box;
+  overflow: visible;
 }
 
 .map-info-window strong {
