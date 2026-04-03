@@ -1,7 +1,0 @@
-{
-  "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"git pull\",\"description\":\"Git pull from remote\"}",
-  "error": "Exit code 1\nerror: Your local changes to the following files would be overwritten by merge:\n\tjs/common.js\nPlease commit your changes or stash them before you merge.\nerror: The following untracked working tree files would be overwritten by merge:\n\t.omc/project-memory.json\nPlease move or remove them before you merge.\nAborting\nUpdating bd49c95..a1245c5",
-  "timestamp": "2026-04-02T21:17:40.696Z",
-  "retry_count": 1
-}
